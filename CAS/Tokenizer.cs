@@ -8,13 +8,22 @@ namespace CAS
 {
     public class Tokenizer
     {
-        public Stack<char> buffer;
-        public Tokenizer(string str)
+        public IBuffer buffer;
+        public List<string> tokens = new List<string>();
+        public Tokenizer(IBuffer buffer)
         {
-            foreach (char c in str)
-            {
-                buffer.Push(c);
-            }
+            this.buffer = buffer;
         }
+
+
+    }
+
+    public interface IBuffer
+    {
+        char GetChar();
+        char PeekChar();
+        void UnGetChar(char c);
+        void UnGetString(string s);
+        bool EndOfInput();
     }
 }

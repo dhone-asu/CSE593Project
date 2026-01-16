@@ -10,7 +10,10 @@ namespace CAS
     {
         static void Main(string[] args)
         {
-            Console.ReadLine();
+            string line = Console.ReadLine();
+            StringBuffer b = new StringBuffer(line);
+            Tokenizer tokenizer = new Tokenizer(b);
+            return;
         }
     }
 }
