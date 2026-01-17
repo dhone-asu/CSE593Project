@@ -90,7 +90,13 @@ namespace CAS
                 case '%':
                     return new Token { TokenType = TokenType.Mod };
                 case '=':
-                    return new Token { TokenType = TokenType.Eq };
+                    if (buffer.PeekChar() == '=')
+                    {
+                        buffer.GetChar();
+                        return new Token { TokenType = TokenType.Eq };
+                    }
+                    else
+                        return new Token { TokenType = TokenType.Assign };
                 case '<':
                     if (buffer.PeekChar() == '=')
                     {
@@ -127,14 +133,6 @@ namespace CAS
                     return new Token { TokenType = TokenType.Rpar };
                 case ',':
                     return new Token { TokenType = TokenType.Comma };
-                case ':':
-                    if (buffer.PeekChar() == '=')
-                    {
-                        buffer.GetChar();
-                        return new Token { TokenType = TokenType.Assign };
-                    }
-                    else
-                        return new Token { TokenType = TokenType.Error };
                 default:
                     if (char.IsLetter(c))
                     {
