@@ -8,7 +8,7 @@ namespace CAS
 {
     public class StringBuffer: IBuffer
     {
-        public Stack<char> buffer = new Stack<char>();
+        public string buffer = "";
         public StringBuffer(string str) 
         {
             UnGetString(str);
@@ -16,37 +16,37 @@ namespace CAS
 
         public char GetChar()
         {
-            if (buffer.Any())
-                return buffer.Pop();
+            if (!EndOfInput())
+            {
+                char c = buffer[0];
+                buffer = buffer.Remove(0, 1);
+                return c;
+            }
             else
                 return '\0';
         }
 
         public char PeekChar()
         {
-            if (buffer.Any())
-                return buffer.Peek();
+            if (!EndOfInput())
+                return buffer[0];
             else
                 return '\0';
         }
 
         public void UnGetChar(char c)
         {
-            buffer.Push(c);
+            buffer = c + buffer;
         }
 
         public void UnGetString(string str)
         {
-            while (str.Any())
-            {
-                buffer.Push(str.Last());
-                str = str.Remove(str.Length - 1);
-            }
+            buffer = str + buffer;
         }
 
         public bool EndOfInput()
         {
-            return !buffer.Any();
+            return buffer.Length == 0;
         }
     }
 }
