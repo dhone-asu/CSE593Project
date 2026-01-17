@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,17 +14,51 @@ namespace CAS
     {
         public IBuffer buffer;
         public List<Token> tokens = new List<Token>();
+        private int index = 0;
         public Tokenizer(IBuffer buffer)
         {
             this.buffer = buffer;
 
             while (!buffer.EndOfInput())
             {
-                tokens.Add(Tokenize());
+                tokens.Add(NextToken());
             }
         }
 
-        private Token Tokenize()
+        public Token GetToken()
+        {
+            if (index >= tokens.Count)
+                return new Token { TokenType = TokenType.EndOfInput };
+            else
+            {
+                return tokens[index++];
+            }
+        }
+
+        public void UnGetToken(int num)
+        {
+            if (num <= 0)
+                throw new Exception("Argument must be greater than 0");
+            index -= num;
+            if (index < 0)
+                throw new Exception("Cannot back up past first token");
+        }
+
+        public Token Peek(int num)
+        {
+            if (num <= 0)
+                throw new Exception("Argument must be greater than 0");
+
+            int tempIndex = index + num - 1;
+
+            if (tempIndex >= tokens.Count)
+                return new Token { TokenType = TokenType.EndOfInput };
+            else
+                return tokens[tempIndex];
+        }
+        
+
+        private Token NextToken()
         {
             SkipSpace();
             char c;
@@ -110,7 +145,7 @@ namespace CAS
             }
         }
 
-        public Token GetNumeral()
+        private Token GetNumeral()
         {
             string str = "";
             char c = buffer.PeekChar();
@@ -146,7 +181,7 @@ namespace CAS
             return new Token { String = str, TokenType = TokenType.Numeral };
         }
 
-        public Token GetIdent()
+        private Token GetIdent()
         {
             string str = "";
             char c = buffer.GetChar();
@@ -170,7 +205,7 @@ namespace CAS
             return new Token { String = str, TokenType = TokenType.Identifier };
         }
 
-        public void SkipSpace()
+        private void SkipSpace()
         {
             char c = buffer.PeekChar();
 
