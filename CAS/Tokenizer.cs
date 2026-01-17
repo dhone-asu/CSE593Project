@@ -127,6 +127,14 @@ namespace CAS
                     return new Token { TokenType = TokenType.Rpar };
                 case ',':
                     return new Token { TokenType = TokenType.Comma };
+                case ':':
+                    if (buffer.PeekChar() == '=')
+                    {
+                        buffer.GetChar();
+                        return new Token { TokenType = TokenType.Assign };
+                    }
+                    else
+                        return new Token { TokenType = TokenType.Error };
                 default:
                     if (char.IsLetter(c))
                     {
@@ -229,6 +237,7 @@ namespace CAS
         Plus, Minus, Div, Mult, Pow, Mod,
         Eq, Neq, Gt, Lt, Gte, Lte,
         Lpar, Rpar, Comma,
+        Assign,
         Error,
         EndOfInput }
     public class Token
