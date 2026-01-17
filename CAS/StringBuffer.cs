@@ -16,12 +16,18 @@ namespace CAS
 
         public char GetChar()
         {
-            return buffer.Pop();
+            if (buffer.Any())
+                return buffer.Pop();
+            else
+                return '\0';
         }
 
         public char PeekChar()
         {
-            return buffer.Peek(); 
+            if (buffer.Any())
+                return buffer.Peek();
+            else
+                return '\0';
         }
 
         public void UnGetChar(char c)

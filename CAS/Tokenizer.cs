@@ -12,10 +12,17 @@ namespace CAS
     public class Tokenizer
     {
         public IBuffer buffer;
-        public List<string> tokens = new List<string>();
+        public List<Token> tokens = new List<Token>();
         public Tokenizer(IBuffer buffer)
         {
             this.buffer = buffer;
+
+            while (!buffer.EndOfInput())
+            {
+                tokens.Add(Tokenize());
+            }
+
+            return;
         }
 
         private Token Tokenize()
@@ -115,7 +122,7 @@ namespace CAS
             while (IsDigit(c))
             {
                 buffer.GetChar();
-                str.Append(c);
+                str = str + c;
                 c = buffer.PeekChar();
             }
 
@@ -124,11 +131,11 @@ namespace CAS
             if (c == '.')
             {
                 buffer.GetChar();
-                str.Append(c);
+                str = str + c;
             }
             else
             {
-                return new Token { TokenType = TokenType.Error };
+                return new Token { String = str, TokenType = TokenType.Numeral };
             }
 
             c = buffer.PeekChar();
@@ -136,7 +143,7 @@ namespace CAS
             while (IsDigit(c))
             {
                 buffer.GetChar();
-                str.Append(c);
+                str = str + c;
                 c = buffer.PeekChar();
             }
 
@@ -150,7 +157,7 @@ namespace CAS
 
             if (IsAlpha(c))
             {
-                str.Append(c);
+                str = str + c;
             }
             else
                 return new Token { TokenType = TokenType.Error };
@@ -160,7 +167,7 @@ namespace CAS
             while (IsAlphaNumOrUnderscore(c))
             {
                 buffer.GetChar();
-                str.Append(c);
+                str = str + c;
                 c = buffer.PeekChar();
             }
 
