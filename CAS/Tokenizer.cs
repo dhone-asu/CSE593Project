@@ -21,8 +21,6 @@ namespace CAS
             {
                 tokens.Add(Tokenize());
             }
-
-            return;
         }
 
         private Token Tokenize()
@@ -95,12 +93,12 @@ namespace CAS
                 case ',':
                     return new Token { TokenType = TokenType.Comma };
                 default:
-                    if (IsAlpha(c))
+                    if (char.IsLetter(c))
                     {
                         buffer.UnGetChar(c);
                         return GetIdent();
                     }
-                    else if (IsDigitOrDecimal(c))
+                    else if (char.IsDigit(c) || c=='.')
                     {
                         buffer.UnGetChar(c);
                         return GetNumeral();
@@ -109,8 +107,6 @@ namespace CAS
                     {
                         return new Token { TokenType = TokenType.Error };
                     }
-                    return new Token { TokenType = TokenType.EndOfInput };
-                    break;
             }
         }
 
@@ -119,7 +115,7 @@ namespace CAS
             string str = "";
             char c = buffer.PeekChar();
 
-            while (IsDigit(c))
+            while (char.IsDigit(c))
             {
                 buffer.GetChar();
                 str = str + c;
@@ -140,7 +136,7 @@ namespace CAS
 
             c = buffer.PeekChar();
 
-            while (IsDigit(c))
+            while (char.IsDigit(c))
             {
                 buffer.GetChar();
                 str = str + c;
@@ -155,7 +151,7 @@ namespace CAS
             string str = "";
             char c = buffer.GetChar();
 
-            if (IsAlpha(c))
+            if (char.IsLetter(c))
             {
                 str = str + c;
             }
@@ -164,7 +160,7 @@ namespace CAS
 
             c = buffer.PeekChar();
 
-            while (IsAlphaNumOrUnderscore(c))
+            while (char.IsLetterOrDigit(c) || c=='_')
             {
                 buffer.GetChar();
                 str = str + c;
@@ -178,37 +174,12 @@ namespace CAS
         {
             char c = buffer.PeekChar();
 
-            while (!buffer.EndOfInput() && IsSpace(c))
+            while (!buffer.EndOfInput() && char.IsWhiteSpace(c))
             {
                 buffer.GetChar();
                 c = buffer.PeekChar();
             }
         }
-
-        public bool IsSpace(char c)
-        {
-            return " \t".Contains(c);
-        }
-
-        public bool IsDigit(char c)
-        {
-            return "0123456789".Contains(c);
-        }
-
-        public bool IsAlphaNumOrUnderscore(char c)
-        {
-            return IsDigit(c) || IsAlpha(c) || c == '_';
-        }
-
-        public bool IsDigitOrDecimal(char c)
-        {
-            return IsDigit(c) || c == '.';
-        }
-        public bool IsAlpha(char c) 
-        {
-            return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(c);
-        }
-
     }
 
     public interface IBuffer
