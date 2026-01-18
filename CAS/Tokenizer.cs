@@ -28,7 +28,7 @@ namespace CAS
         public Token GetToken()
         {
             if (index >= tokens.Count)
-                return new Token { TokenType = TokenType.EndOfInput };
+                return new Token { Type = TokenType.EndOfInput };
             else
             {
                 return tokens[index++];
@@ -38,21 +38,21 @@ namespace CAS
         public void UnGetToken(int num)
         {
             if (num <= 0)
-                throw new Exception("Argument must be greater than 0");
+                throw new TokenizerException("Argument must be greater than 0");
             index -= num;
             if (index < 0)
-                throw new Exception("Cannot back up past first token");
+                throw new TokenizerException("Cannot back up past first token");
         }
 
         public Token Peek(int num)
         {
             if (num <= 0)
-                throw new Exception("Argument must be greater than 0");
+                throw new TokenizerException("Argument must be greater than 0");
 
             int tempIndex = index + num - 1;
 
             if (tempIndex >= tokens.Count)
-                return new Token { TokenType = TokenType.EndOfInput };
+                return new Token { Type = TokenType.EndOfInput };
             else
                 return tokens[tempIndex];
         }
@@ -65,74 +65,74 @@ namespace CAS
 
             if (buffer.EndOfInput())
             {
-                return new Token { String = "", TokenType = TokenType.EndOfInput };
+                return new Token { String = "", Type = TokenType.EndOfInput };
             }
             else c = buffer.GetChar();
 
             switch (c)
             {
                 case '+':
-                    return new Token { TokenType = TokenType.Plus };
+                    return new Token { Type = TokenType.Plus };
                 case '-':
-                    return new Token { TokenType = TokenType.Minus };
+                    return new Token { Type = TokenType.Minus };
                 case '/':
-                    return new Token { TokenType = TokenType.Div };
+                    return new Token { Type = TokenType.Div };
                 case '*':
                     if (buffer.PeekChar() == '*')
                     {
                         buffer.GetChar();
-                        return new Token { TokenType = TokenType.Pow };
+                        return new Token { Type = TokenType.Pow };
                     }
                     else
                     {
-                        return new Token { TokenType = TokenType.Mult };
+                        return new Token { Type = TokenType.Mult };
                     }
                 case '%':
-                    return new Token { TokenType = TokenType.Mod };
+                    return new Token { Type = TokenType.Mod };
                 case '=':
                     if (buffer.PeekChar() == '=')
                     {
                         buffer.GetChar();
-                        return new Token { TokenType = TokenType.Eq };
+                        return new Token { Type = TokenType.Eq };
                     }
                     else
-                        return new Token { TokenType = TokenType.Assign };
+                        return new Token { Type = TokenType.Assign };
                 case '<':
                     if (buffer.PeekChar() == '=')
                     {
                         buffer.GetChar();
-                        return new Token { TokenType = TokenType.Lte };
+                        return new Token { Type = TokenType.Lte };
                     }
                     else
                     {
-                        return new Token { TokenType = TokenType.Lt };
+                        return new Token { Type = TokenType.Lt };
                     }
                 case '>':
                     if (buffer.PeekChar() == '=')
                     {
                         buffer.GetChar();
-                        return new Token { TokenType = TokenType.Gte };
+                        return new Token { Type = TokenType.Gte };
                     }
                     else
                     {
-                        return new Token { TokenType = TokenType.Gt };
+                        return new Token { Type = TokenType.Gt };
                     }
                 case '!':
                     if (buffer.PeekChar() == '=')
                     {
                         buffer.GetChar();
-                        return new Token { TokenType = TokenType.Neq };
+                        return new Token { Type = TokenType.Neq };
                     }
                     else
                     {
-                        return new Token { TokenType = TokenType.Error };
+                        return new Token { Type = TokenType.Error };
                     }
                 case '(':
-                    return new Token { TokenType = TokenType.Lpar };
+                    return new Token { Type = TokenType.Lpar };
                 case ')':
-                    return new Token { TokenType = TokenType.Rpar };
+                    return new Token { Type = TokenType.Rpar };
                 case ',':
-                    return new Token { TokenType = TokenType.Comma };
+                    return new Token { Type = TokenType.Comma };
                 default:
                     if (char.IsLetter(c))
                     {
@@ -146,7 +146,7 @@ namespace CAS
                     }
                     else
                     {
-                        return new Token { TokenType = TokenType.Error };
+                        return new Token { Type = TokenType.Error };
                     }
             }
         }
@@ -172,7 +172,7 @@ namespace CAS
             }
             else
             {
-                return new Token { String = str, TokenType = TokenType.Numeral };
+                return new Token { String = str, Type = TokenType.Numeral };
             }
 
             c = buffer.PeekChar();
@@ -184,7 +184,7 @@ namespace CAS
                 c = buffer.PeekChar();
             }
 
-            return new Token { String = str, TokenType = TokenType.Numeral };
+            return new Token { String = str, Type = TokenType.Numeral };
         }
 
         private Token GetIdent()
@@ -197,7 +197,7 @@ namespace CAS
                 str = str + c;
             }
             else
-                return new Token { TokenType = TokenType.Error };
+                return new Token { Type = TokenType.Error };
 
             c = buffer.PeekChar();
 
@@ -208,7 +208,7 @@ namespace CAS
                 c = buffer.PeekChar();
             }
 
-            return new Token { String = str, TokenType = TokenType.Identifier };
+            return new Token { String = str, Type = TokenType.Identifier };
         }
 
         private void SkipSpace()
@@ -240,7 +240,7 @@ namespace CAS
         EndOfInput }
     public class Token
     {
-        public TokenType TokenType
+        public TokenType Type
         {
             get; set; 
         }
@@ -249,5 +249,11 @@ namespace CAS
             get; set; 
         }
 
+    }
+
+    public class TokenizerException : Exception
+    {
+        public TokenizerException(string message) : base(message) { }
+        public TokenizerException() : base() { }
     }
 }
