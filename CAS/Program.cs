@@ -13,6 +13,8 @@ namespace CAS
             string line = Console.ReadLine();
             StringBuffer b = new StringBuffer(line);
             Tokenizer tokenizer = new Tokenizer(b);
+            Parser parser = new Parser(tokenizer);
+            parser.ParseInput();
             return;
         }
     }

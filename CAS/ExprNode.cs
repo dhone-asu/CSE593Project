@@ -26,7 +26,7 @@ namespace CAS
             TokenType.Mult | TokenType.Pow | TokenType.Mod | TokenType.Eq | TokenType.Neq | TokenType.Gt | 
             TokenType.Lt | TokenType.Gte | TokenType.Lte;
 
-        public static Dictionary<TokenType, BinaryOperator> OperatorMap  = new Dictionary<TokenType, BinaryOperator>
+        public static readonly Dictionary<TokenType, BinaryOperator> OperatorMap  = new Dictionary<TokenType, BinaryOperator>
         {
             {TokenType.Plus, BinaryOperator.Plus},
             {TokenType.Minus, BinaryOperator.Minus},

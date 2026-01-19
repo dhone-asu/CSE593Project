@@ -9,7 +9,22 @@ namespace CAS
 {
     public class Parser
     {
-        Tokenizer tokenizer;
+        private Tokenizer tokenizer;
+        //public enum BinaryOperator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte }
+        public static readonly Dictionary<BinaryOperator, int> PrecedenceMap = new Dictionary<BinaryOperator, int>
+        {
+            { BinaryOperator.Pow, 1 },
+            { BinaryOperator.Mult, 2},
+            { BinaryOperator.Div, 2},
+            { BinaryOperator.Plus, 3 },
+            { BinaryOperator.Minus, 3  },
+            { BinaryOperator.Eq, 4 },
+            { BinaryOperator.Neq, 4 },
+            { BinaryOperator.Gt, 4 },
+            { BinaryOperator.Lt, 4 },
+            { BinaryOperator.Gte, 4 },
+            { BinaryOperator.Lte, 4 },
+        };
 
         public Parser(Tokenizer tokenizer)
         {
@@ -46,7 +61,8 @@ namespace CAS
             }
             else
             {
-                ParseExpr();
+                ExprNode node = ParseExpr();
+                return;
             }
         }
 
@@ -56,7 +72,9 @@ namespace CAS
 
             Expect(TokenType.Assign);
 
-            ParseExpr();
+            ExprNode node = ParseExpr();
+
+            return;
 
         }
 
@@ -157,6 +175,8 @@ namespace CAS
             }
         }
     }
+
+    public enum ParserContext { Assignment, Standalone, Params, Parentheses }
 
     public class ParserException : Exception
     {
