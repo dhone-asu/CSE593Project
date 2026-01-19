@@ -231,6 +231,8 @@ namespace CAS
         void UnGetString(string s);
         bool EndOfInput();
     }
+
+    [Flags]
     public enum TokenType { Numeral, Identifier,
         Plus, Minus, Div, Mult, Pow, Mod,
         Eq, Neq, Gt, Lt, Gte, Lte,
@@ -238,6 +240,7 @@ namespace CAS
         Assign,
         Error,
         EndOfInput }
+
     public class Token
     {
         public TokenType Type

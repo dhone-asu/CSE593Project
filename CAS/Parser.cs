@@ -60,34 +60,101 @@ namespace CAS
 
         }
 
-        public void ParseExpr()
+        public ExprNode ParseExpr()
         {
-            Token t = tokenizer.Peek(1);
+            Token t1 = tokenizer.Peek(1);
+            Token t2 = tokenizer.Peek(2);
+            ExprNode node1;
+            ExprNode node2;
+            BinaryOperator op;
 
-            if (t.Type == TokenType.Lpar)
+            if (t1.Type == TokenType.Lpar)
             {
                 Expect(TokenType.Lpar);
-                ParseExpr();
+                node1 = ParseExpr();
                 Expect(TokenType.Rpar);
+                return node1;
             }
-            else if ((t.Type == TokenType.Identifier) || (t.Type == TokenType.Numeral))
+            else if ((t1.Type == TokenType.Identifier) || (t1.Type == TokenType.Numeral))
             {
-                ParseToken();
+                if (ExprNode.ExprOperators.HasFlag(t2.Type))
+                {
+                    node1 = ParseExpr();
+                    op = ParseOp();
+                    node2 = ParseExpr();
+                    return new BinaryOpNode { Operator = op, Left  = node1, Right = node2 };
+                }
+                else
+                {
+                    return ParseTerm();
+
+                }
             }
             else
             {
-                
+                SyntaxError();
+                return null;
             }
+
         }
 
-        public void ParseToken()
+        public BinaryOperator ParseOp()
+        {
+            Token t = tokenizer.Peek(1);
+            Token op;
+
+            if (t.Type == TokenType.Plus)
+                op = Expect(TokenType.Plus);
+            else if (t.Type == TokenType.Minus)
+                op = Expect(TokenType.Minus);
+            else if (t.Type == TokenType.Div)
+                op = Expect(TokenType.Div);
+            else if (t.Type == TokenType.Mult)
+                op = Expect(TokenType.Mult);
+            else if (t.Type == TokenType.Pow)
+                op = Expect(TokenType.Pow);
+            else if (t.Type == TokenType.Mod)
+                op = Expect(TokenType.Mod);
+            else if (t.Type == TokenType.Eq)
+                op = Expect(TokenType.Eq);
+            else if (t.Type == TokenType.Neq)
+                op = Expect(TokenType.Neq);
+            else if (t.Type == TokenType.Gt)
+                op = Expect(TokenType.Gt);
+            else if (t.Type == TokenType.Lt)
+                op = Expect(TokenType.Lt);
+            else if (t.Type == TokenType.Gte)
+                op = Expect(TokenType.Gte);
+            else if (t.Type == TokenType.Lte)
+                op = Expect(TokenType.Lte);
+            else
+            { 
+                SyntaxError();
+                return BinaryOperator.None; // This is to silence and error that op remains unassigned
+            }
+
+            return ExprNode.OperatorMap[op.Type];
+        }
+
+        public TermNode ParseTerm()
         {
             Token t = tokenizer.Peek(1);
 
             if (t.Type == TokenType.Numeral)
-                Expect(TokenType.Numeral);
+            {
+                t = Expect(TokenType.Numeral);
+                return new TermNode { Name = t.String, Type = TermType.Numeral };
+            }
             else if (t.Type == TokenType.Identifier)
-                Expect(TokenType.Identifier);
+            {
+                t = Expect(TokenType.Identifier);
+                return new TermNode { Name = t.String, Type = TermType.Identifier };
+            }
+            else
+            {
+                SyntaxError();
+                return null;
+            }
         }
     }
 
