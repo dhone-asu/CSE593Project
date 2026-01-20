@@ -128,9 +128,9 @@ namespace CAS
                         return new Token { Type = TokenType.Error };
                     }
                 case '(':
-                    return new Token { Type = TokenType.Lpar };
+                    return new Token { Type = TokenType.LParen };
                 case ')':
-                    return new Token { Type = TokenType.Rpar };
+                    return new Token { Type = TokenType.RParen };
                 case ',':
                     return new Token { Type = TokenType.Comma };
                 default:
@@ -236,7 +236,7 @@ namespace CAS
     public enum TokenType { Numeral, Identifier,
         Plus, Minus, Div, Mult, Pow, Mod,
         Eq, Neq, Gt, Lt, Gte, Lte,
-        Lpar, Rpar, Comma,
+        LParen, RParen, Comma,
         Assign,
         Error,
         EndOfInput }

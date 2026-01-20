@@ -45,8 +45,10 @@
   <ItemGroup>
     <Compile Include="ExprNode.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="ParserStack.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuleManager.cs" />
     <Compile Include="StringBuffer.cs" />
     <Compile Include="Tokenizer.cs" />
   </ItemGroup>

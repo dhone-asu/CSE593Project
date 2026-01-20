@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CAS
 {
+    public enum ParserContext { Assignment, Standalone, Params, Parentheses }
     public class Parser
     {
         private Tokenizer tokenizer;
@@ -86,11 +87,11 @@ namespace CAS
             ExprNode node2;
             BinaryOperator op;
 
-            if (t1.Type == TokenType.Lpar)
+            if (t1.Type == TokenType.LParen)
             {
-                Expect(TokenType.Lpar);
+                Expect(TokenType.LParen);
                 node1 = ParseExpr();
-                Expect(TokenType.Rpar);
+                Expect(TokenType.RParen);
                 return node1;
             }
             else if ((t1.Type == TokenType.Identifier) || (t1.Type == TokenType.Numeral))
@@ -151,22 +152,22 @@ namespace CAS
                 return BinaryOperator.None; // This is to silence and error that op remains unassigned
             }
 
-            return ExprNode.OperatorMap[op.Type];
+            return RuleManager.OperatorMap[op.Type];
         }
 
-        public TermNode ParseTerm()
+        public AtomNode ParseTerm()
         {
             Token t = tokenizer.Peek(1);
 
             if (t.Type == TokenType.Numeral)
             {
                 t = Expect(TokenType.Numeral);
-                return new TermNode { Name = t.String, Type = TermType.Numeral };
+                return new AtomNode { Name = t.String, Type = AtomType.Numeral };
             }
             else if (t.Type == TokenType.Identifier)
             {
                 t = Expect(TokenType.Identifier);
-                return new TermNode { Name = t.String, Type = TermType.Identifier };
+                return new AtomNode { Name = t.String, Type = AtomType.Identifier };
             }
             else
             {
@@ -175,8 +176,6 @@ namespace CAS
             }
         }
     }
-
-    public enum ParserContext { Assignment, Standalone, Params, Parentheses }
 
     public class ParserException : Exception
     {
