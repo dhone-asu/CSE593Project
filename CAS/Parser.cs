@@ -105,7 +105,7 @@ namespace CAS
                 }
                 else
                 {
-                    return ParseTerm();
+                    return ParseAtom();
 
                 }
             }
@@ -155,7 +155,7 @@ namespace CAS
             return RuleManager.OperatorMap[op.Type];
         }
 
-        public AtomNode ParseTerm()
+        public AtomNode ParseAtom()
         {
             Token t = tokenizer.Peek(1);
 

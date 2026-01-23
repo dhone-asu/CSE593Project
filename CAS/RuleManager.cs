@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CAS
 {
-    public enum RuleElement { Expr, Op, LParen, RParen, Ident, Num };
+    public enum RuleElement { Expr, Op, LParen, RParen, Ident, Num, Params };
 
     class RuleManager
     {

@@ -8,6 +8,7 @@ namespace CAS
 {
     public class ParserStack
     {
+        public Stack<StackNode> Stack {  get; set; } = new Stack<StackNode>();
     }
 
     public class StackNode { }
