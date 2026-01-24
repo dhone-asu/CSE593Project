@@ -12,19 +12,21 @@ namespace CAS
     {
         private Tokenizer tokenizer;
         //public enum BinaryOperator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte }
-        public static readonly Dictionary<BinaryOperator, int> PrecedenceMap = new Dictionary<BinaryOperator, int>
+        public static readonly Dictionary<Operator, int> PrecedenceMap = new Dictionary<Operator, int>
         {
-            { BinaryOperator.Pow, 1 },
-            { BinaryOperator.Mult, 2},
-            { BinaryOperator.Div, 2},
-            { BinaryOperator.Plus, 3 },
-            { BinaryOperator.Minus, 3  },
-            { BinaryOperator.Eq, 4 },
-            { BinaryOperator.Neq, 4 },
-            { BinaryOperator.Gt, 4 },
-            { BinaryOperator.Lt, 4 },
-            { BinaryOperator.Gte, 4 },
-            { BinaryOperator.Lte, 4 },
+            { Operator.None, -1 },
+            { Operator.Pow, 0 },
+            { Operator.Neg, 1 },
+            { Operator.Mult, 2},
+            { Operator.Div, 2},
+            { Operator.Plus, 3 },
+            { Operator.Minus, 3 },
+            { Operator.Eq, 4 },
+            { Operator.Neq, 4 },
+            { Operator.Gt, 4 },
+            { Operator.Lt, 4 },
+            { Operator.Gte, 4 },
+            { Operator.Lte, 4 },
         };
 
         public Parser(Tokenizer tokenizer)
@@ -32,9 +34,9 @@ namespace CAS
             this.tokenizer = tokenizer; 
         }
 
-        public void SyntaxError()
+        public void SyntaxError(String message)
         {
-            throw new ParserException("Syntax error");
+            throw new ParserException($"Syntax error: {message}");
         }
 
         public Token Expect(TokenType type)
@@ -42,7 +44,7 @@ namespace CAS
             Token t = tokenizer.GetToken();
 
             if (t.Type != type)
-                SyntaxError();
+                SyntaxError($"'{type}' expected");
   
             return t;
         }
@@ -62,7 +64,7 @@ namespace CAS
             }
             else
             {
-                ExprNode node = ParseExpr();
+                ExprNode node = ParseExpr(Operator.None, false);
                 return;
             }
         }
@@ -73,51 +75,85 @@ namespace CAS
 
             Expect(TokenType.Assign);
 
-            ExprNode node = ParseExpr();
+            ExprNode node = ParseExpr(Operator.None, false);
 
             return;
 
         }
 
-        public ExprNode ParseExpr()
+        public ExprNode ParseExpr(Operator prevOp, bool inParen)
         {
             Token t1 = tokenizer.Peek(1);
             Token t2 = tokenizer.Peek(2);
             ExprNode node1;
             ExprNode node2;
-            BinaryOperator op;
+            Operator op;
 
             if (t1.Type == TokenType.LParen)
             {
                 Expect(TokenType.LParen);
-                node1 = ParseExpr();
+                node1 = ParseExpr(Operator.None, true);
                 Expect(TokenType.RParen);
                 return node1;
             }
+            else if (t1.Type == TokenType.Minus)
+            {
+                Expect(TokenType.Minus);
+                node1 = ParseExpr(Operator.Minus, inParen);
+                OpNode opNode = new OpNode
+                {
+                    Operator = Operator.Neg,
+                    Left = node1,
+                };
+                return opNode;
+            }
             else if ((t1.Type == TokenType.Identifier) || (t1.Type == TokenType.Numeral))
             {
-                if (ExprNode.ExprOperators.HasFlag(t2.Type))
+                if (t1.Type == TokenType.Identifier)
+                    t1 = Expect(TokenType.Identifier);
+                else
+                    t1 = Expect(TokenType.Numeral);
+
+                node1 = new AtomNode
                 {
-                    node1 = ParseExpr();
-                    op = ParseOp();
-                    node2 = ParseExpr();
-                    return new BinaryOpNode { Operator = op, Left  = node1, Right = node2 };
+                    Name = t1.String,
+                    Type = (t1.Type == TokenType.Identifier) ? AtomType.Identifier : AtomType.Numeral
+                };
+
+                if (t2.Type == TokenType.EndOfInput)
+                    return node1;
+                else if (inParen && t2.Type == TokenType.RParen)
+                    return node1;
+
+                op = ParseOp();
+
+                if (prevOp == Operator.None || PrecedenceMap[op] < PrecedenceMap[prevOp])
+                {
+                    node2 = ParseExpr(op, inParen);
+
+                    OpNode opNode = new OpNode
+                    {
+                        Operator = op,
+                        Left = node1,
+                        Right = node2
+                    };
+
+                    return opNode;
                 }
                 else
                 {
-                    return ParseAtom();
-
+                    return node1;
                 }
             }
             else
             {
-                SyntaxError();
+                SyntaxError($"Type '{t1.Type}' not expected");
                 return null;
             }
 
         }
 
-        public BinaryOperator ParseOp()
+        public Operator ParseOp()
         {
             Token t = tokenizer.Peek(1);
             Token op;
@@ -147,9 +183,9 @@ namespace CAS
             else if (t.Type == TokenType.Lte)
                 op = Expect(TokenType.Lte);
             else
-            { 
-                SyntaxError();
-                return BinaryOperator.None; // This is to silence and error that op remains unassigned
+            {
+                SyntaxError($"Unexpected operator");
+                return Operator.None; // This is to silence and error that op remains unassigned
             }
 
             return RuleManager.OperatorMap[op.Type];
@@ -171,7 +207,7 @@ namespace CAS
             }
             else
             {
-                SyntaxError();
+                SyntaxError($"Unexpected atom type");
                 return null;
             }
         }

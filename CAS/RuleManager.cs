@@ -33,19 +33,19 @@ namespace CAS
             { TokenType.Numeral, RuleElement.Num }
         };
 
-        public static readonly Dictionary<TokenType, BinaryOperator> OperatorMap = new Dictionary<TokenType, BinaryOperator>
+        public static readonly Dictionary<TokenType, Operator> OperatorMap = new Dictionary<TokenType, Operator>
         {
-            {TokenType.Plus, BinaryOperator.Plus},
-            {TokenType.Minus, BinaryOperator.Minus},
-            {TokenType.Div, BinaryOperator.Div},
-            {TokenType.Mult, BinaryOperator.Mult},
-            {TokenType.Pow, BinaryOperator.Pow},
-            {TokenType.Mod, BinaryOperator.Mod},
-            {TokenType.Eq, BinaryOperator.Eq},
-            {TokenType.Gt, BinaryOperator.Gt},
-            {TokenType.Lt, BinaryOperator.Lt},
-            {TokenType.Gte, BinaryOperator.Gte},
-            {TokenType.Lte, BinaryOperator.Lte},
+            {TokenType.Plus, Operator.Plus},
+            {TokenType.Minus, Operator.Minus},
+            {TokenType.Div, Operator.Div},
+            {TokenType.Mult, Operator.Mult},
+            {TokenType.Pow, Operator.Pow},
+            {TokenType.Mod, Operator.Mod},
+            {TokenType.Eq, Operator.Eq},
+            {TokenType.Gt, Operator.Gt},
+            {TokenType.Lt, Operator.Lt},
+            {TokenType.Gte, Operator.Gte},
+            {TokenType.Lte, Operator.Lte},
         };
         public RuleManager()
         {

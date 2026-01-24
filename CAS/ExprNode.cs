@@ -16,10 +16,9 @@ namespace CAS
         Error,
         EndOfInput
     }*/
-    public enum BinaryOperator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte }
-    public enum UnaryOperator { Neg }
+    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Paren }
 
-    public enum AtomType { Numeral, Identifier, }
+    public enum AtomType { Numeral, Identifier }
     public class ExprNode
     {
         public static readonly TokenType ExprOperators = TokenType.Plus | TokenType.Minus | TokenType.Div | 
@@ -28,19 +27,11 @@ namespace CAS
 
         public string Name { get; set; }
     }
-    public class BinaryOpNode: ExprNode
+    public class OpNode: ExprNode
     {
-        public BinaryOperator Operator { get; set; }
+        public Operator Operator { get; set; }
         public ExprNode Left { get; set; }
         public ExprNode Right { get; set; }
-    }
-
-    public class UnaryOpNode: ExprNode
-    {
-        public UnaryOperator Operator { get; set; }
-
-        public ExprNode Operand { get; set; }
-
     }
 
     public class FunctionNode : ExprNode
