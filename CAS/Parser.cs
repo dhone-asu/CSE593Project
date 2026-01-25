@@ -14,7 +14,6 @@ namespace CAS
         //public enum BinaryOperator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte }
         public static readonly Dictionary<Operator, int> PrecedenceMap = new Dictionary<Operator, int>
         {
-            { Operator.None, 0 },
             { Operator.Pow, 5 },
             { Operator.Neg, 4 },
             { Operator.Mult, 3},
