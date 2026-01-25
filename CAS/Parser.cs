@@ -14,19 +14,19 @@ namespace CAS
         //public enum BinaryOperator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte }
         public static readonly Dictionary<Operator, int> PrecedenceMap = new Dictionary<Operator, int>
         {
-            { Operator.None, -1 },
-            { Operator.Pow, 0 },
-            { Operator.Neg, 1 },
-            { Operator.Mult, 2},
-            { Operator.Div, 2},
-            { Operator.Plus, 3 },
-            { Operator.Minus, 3 },
-            { Operator.Eq, 4 },
-            { Operator.Neq, 4 },
-            { Operator.Gt, 4 },
-            { Operator.Lt, 4 },
-            { Operator.Gte, 4 },
-            { Operator.Lte, 4 },
+            { Operator.None, 0 },
+            { Operator.Pow, 5 },
+            { Operator.Neg, 4 },
+            { Operator.Mult, 3},
+            { Operator.Div, 3},
+            { Operator.Plus, 2 },
+            { Operator.Minus, 2 },
+            { Operator.Eq, 1 },
+            { Operator.Neq, 1 },
+            { Operator.Gt, 1 },
+            { Operator.Lt, 1 },
+            { Operator.Gte, 1 },
+            { Operator.Lte, 1 },
         };
 
         public Parser(Tokenizer tokenizer)
@@ -64,7 +64,7 @@ namespace CAS
             }
             else
             {
-                ExprNode node = ParseExpr(Operator.None, false);
+                ExprNode node = ParseExpr(1, false);
                 return;
             }
         }
@@ -75,82 +75,55 @@ namespace CAS
 
             Expect(TokenType.Assign);
 
-            ExprNode node = ParseExpr(Operator.None, false);
-
+            ExprNode node = ParseExpr(1, false);
+             
             return;
 
         }
 
-        public ExprNode ParseExpr(Operator prevOp, bool inParen)
+        // Operator precedence parsing adapted from Eli Bendersky's website:
+        //  https://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
+        public ExprNode ParseExpr(int minPrec, bool inParen)
         {
-            Token t1 = tokenizer.Peek(1);
-            Token t2 = tokenizer.Peek(2);
-            ExprNode node1;
-            ExprNode node2;
-            Operator op;
+            ExprNode lhs = ParseAtom(inParen);
+            ExprNode rhs = null;
+            Token cur = null;
 
-            if (t1.Type == TokenType.LParen)
+            while (true)
             {
-                Expect(TokenType.LParen);
-                node1 = ParseExpr(Operator.None, true);
-                Expect(TokenType.RParen);
-                return node1;
-            }
-            else if (t1.Type == TokenType.Minus)
-            {
-                Expect(TokenType.Minus);
-                node1 = ParseExpr(Operator.Minus, inParen);
-                OpNode opNode = new OpNode
+                cur = tokenizer.Peek(1);
+
+                if ((cur.Type == TokenType.EndOfInput) || (inParen && cur.Type == TokenType.RParen))
+                    break;
+
+                Operator op = ParseOp();
+
+                int prec = PrecedenceMap[op];
+
+                if (prec < minPrec)
                 {
-                    Operator = Operator.Neg,
-                    Left = node1,
-                };
-                return opNode;
-            }
-            else if ((t1.Type == TokenType.Identifier) || (t1.Type == TokenType.Numeral))
-            {
-                if (t1.Type == TokenType.Identifier)
-                    t1 = Expect(TokenType.Identifier);
-                else
-                    t1 = Expect(TokenType.Numeral);
-
-                node1 = new AtomNode
-                {
-                    Name = t1.String,
-                    Type = (t1.Type == TokenType.Identifier) ? AtomType.Identifier : AtomType.Numeral
-                };
-
-                if (t2.Type == TokenType.EndOfInput)
-                    return node1;
-                else if (inParen && t2.Type == TokenType.RParen)
-                    return node1;
-
-                op = ParseOp();
-
-                if (prevOp == Operator.None || PrecedenceMap[op] < PrecedenceMap[prevOp])
-                {
-                    node2 = ParseExpr(op, inParen);
-
-                    OpNode opNode = new OpNode
-                    {
-                        Operator = op,
-                        Left = node1,
-                        Right = node2
-                    };
-
-                    return opNode;
+                    tokenizer.UnGetToken(1);
+                    break;
                 }
-                else
-                {
-                    return node1;
-                }
-            }
-            else
-            {
-                SyntaxError($"Type '{t1.Type}' not expected");
-                return null;
+
+                int nextMinPrec = (op == Operator.Pow) ? prec : prec + 1;
+
+                rhs = ParseExpr(nextMinPrec, inParen);
+
+                lhs = BuildOpNode(op, lhs, rhs);
             }
 
+            return lhs;
+        }
+
+        public ExprNode BuildOpNode(Operator op, ExprNode lhs, ExprNode rhs)
+        {
+            return new OpNode
+            {
+                Operator = op,
+                Left = lhs,
+                Right = rhs,
+            };
         }
 
         public Operator ParseOp()
@@ -184,14 +157,14 @@ namespace CAS
                 op = Expect(TokenType.Lte);
             else
             {
-                SyntaxError($"Unexpected operator");
+                SyntaxError($"Unexpected operator '{t.Type}'");
                 return Operator.None; // This is to silence and error that op remains unassigned
             }
 
             return RuleManager.OperatorMap[op.Type];
         }
 
-        public AtomNode ParseAtom()
+        public ExprNode ParseAtom(bool inParen)
         {
             Token t = tokenizer.Peek(1);
 
@@ -204,6 +177,23 @@ namespace CAS
             {
                 t = Expect(TokenType.Identifier);
                 return new AtomNode { Name = t.String, Type = AtomType.Identifier };
+            }
+            else if (t.Type == TokenType.Minus)
+            {
+                Expect(TokenType.Minus);
+                ExprNode node = ParseExpr(PrecedenceMap[Operator.Neg], inParen);
+                return new OpNode
+                {
+                    Operator = Operator.Neg,
+                    Left = node
+                };
+            }
+            else if (t.Type == TokenType.LParen)
+            {
+                Expect(TokenType.LParen);
+                ExprNode node = ParseExpr(1, true);
+                Expect(TokenType.RParen);
+                return node;
             }
             else
             {
