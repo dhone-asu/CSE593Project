@@ -26,7 +26,7 @@ namespace CAS
             { Operator.Lte, 1 },
         };
 
-        public static readonly Dictionary<TokenType, Operator> OperatorMap = new Dictionary<TokenType, Operator>
+        public static readonly Dictionary<TokenType, Operator> TokenToOperatorMap = new Dictionary<TokenType, Operator>
         {
             {TokenType.Plus, Operator.Plus},
             {TokenType.Minus, Operator.Minus},
@@ -189,7 +189,7 @@ namespace CAS
                 return Operator.None; // This is to silence and error that op remains unassigned
             }
 
-            return OperatorMap[op.Type];
+            return TokenToOperatorMap[op.Type];
         }
 
         public ExprNode ParseOperand(bool inParen, ParserContext context)

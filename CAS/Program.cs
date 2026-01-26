@@ -16,11 +16,11 @@ namespace CAS
             Parser parser = new Parser(tokenizer);
             ExprNode tree = parser.ParseInput();
 
-            Console.WriteLine(Traverse(tree));
+            //Console.WriteLine(Traverse(tree));
             return;
         }
         //public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
-        static Dictionary<Operator, string> map = new Dictionary<Operator, string>
+        static Dictionary<Operator, string> operatorToStringMap = new Dictionary<Operator, string>
         {
             { Operator.None, "" },
             { Operator.Plus, "+" },
@@ -49,12 +49,12 @@ namespace CAS
                 var rightNode = opNode.Right;
                 if (rightNode != null)
                 {
-                    string s = $"{Traverse(leftNode)} {Traverse(rightNode)} {map[opNode.Operator]}";
+                    string s = $"{Traverse(leftNode)} {Traverse(rightNode)} {operatorToStringMap[opNode.Operator]}";
                     return s;
                 }
                 else
                 {
-                    string s = $"{Traverse(leftNode)} {map[opNode.Operator]}";
+                    string s = $"{Traverse(leftNode)} {operatorToStringMap[opNode.Operator]}";
                     return s;
                 }
             }
