@@ -19,14 +19,7 @@ namespace CAS
     public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Paren }
 
     public enum AtomType { Numeral, Identifier }
-    public class ExprNode
-    {
-        public static readonly TokenType ExprOperators = TokenType.Plus | TokenType.Minus | TokenType.Div | 
-            TokenType.Mult | TokenType.Pow | TokenType.Mod | TokenType.Eq | TokenType.Neq | TokenType.Gt | 
-            TokenType.Lt | TokenType.Gte | TokenType.Lte;
-
-        public string Name { get; set; }
-    }
+    public class ExprNode { }
     public class OpNode: ExprNode
     {
         public Operator Operator { get; set; }
@@ -40,7 +33,8 @@ namespace CAS
     }
 
     public class AtomNode : ExprNode
-    {       
+    {        
+        public string Data { get; set; }
         public AtomType Type { get; set; }
     }
 }

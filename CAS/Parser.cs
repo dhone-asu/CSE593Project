@@ -185,12 +185,12 @@ namespace CAS
             if (t.Type == TokenType.Numeral)
             {
                 t = Expect(TokenType.Numeral);
-                return new AtomNode { Name = t.String, Type = AtomType.Numeral };
+                return new AtomNode { Data = t.String, Type = AtomType.Numeral };
             }
             else if (t.Type == TokenType.Identifier)
             {
                 t = Expect(TokenType.Identifier);
-                return new AtomNode { Name = t.String, Type = AtomType.Identifier };
+                return new AtomNode { Data = t.String, Type = AtomType.Identifier };
             }
             else if (t.Type == TokenType.Minus)
             {
