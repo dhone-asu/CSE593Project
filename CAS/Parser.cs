@@ -28,6 +28,21 @@ namespace CAS
             { Operator.Lte, 1 },
         };
 
+        public static readonly Dictionary<TokenType, Operator> OperatorMap = new Dictionary<TokenType, Operator>
+        {
+            {TokenType.Plus, Operator.Plus},
+            {TokenType.Minus, Operator.Minus},
+            {TokenType.Div, Operator.Div},
+            {TokenType.Mult, Operator.Mult},
+            {TokenType.Pow, Operator.Pow},
+            {TokenType.Mod, Operator.Mod},
+            {TokenType.Eq, Operator.Eq},
+            {TokenType.Gt, Operator.Gt},
+            {TokenType.Lt, Operator.Lt},
+            {TokenType.Gte, Operator.Gte},
+            {TokenType.Lte, Operator.Lte},
+        };
+
         public Parser(Tokenizer tokenizer)
         {
             this.tokenizer = tokenizer; 
@@ -105,7 +120,7 @@ namespace CAS
                     break;
                 }
 
-                int nextMinPrec = (op == Operator.Pow) ? prec : prec + 1;
+                int nextMinPrec = (op == Operator.Pow) ? prec : prec + 1; // Exponentiation is right-associative
 
                 rhs = ParseExpr(nextMinPrec, inParen);
 
@@ -160,7 +175,7 @@ namespace CAS
                 return Operator.None; // This is to silence and error that op remains unassigned
             }
 
-            return RuleManager.OperatorMap[op.Type];
+            return OperatorMap[op.Type];
         }
 
         public ExprNode ParseAtom(bool inParen)
