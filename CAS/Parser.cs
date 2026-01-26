@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CAS
 {
@@ -113,7 +109,7 @@ namespace CAS
         //  https://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
         public ExprNode ParseExpr(int minPrec, bool inParen, ParserContext context)
         {
-            ExprNode lhs = ParseAtom(inParen, context);
+            ExprNode lhs = ParseOperand(inParen, context);
             ExprNode rhs = null;
             Token cur = null;
 
@@ -126,7 +122,7 @@ namespace CAS
                 else if (!inParen && context == ParserContext.Params && (cur.Type == TokenType.Comma || cur.Type == TokenType.RParen))
                     break;
 
-                Operator op = ParseOp();
+                Operator op = ParseOperator();
 
                 int prec = PrecedenceMap[op];
 
@@ -156,7 +152,7 @@ namespace CAS
             };
         }
 
-        public Operator ParseOp()
+        public Operator ParseOperator()
         {
             Token t = tokenizer.Peek(1);
             Token op;
@@ -194,7 +190,7 @@ namespace CAS
             return OperatorMap[op.Type];
         }
 
-        public ExprNode ParseAtom(bool inParen, ParserContext context)
+        public ExprNode ParseOperand(bool inParen, ParserContext context)
         {
             Token t = tokenizer.Peek(1);
 
