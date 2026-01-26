@@ -63,35 +63,49 @@ namespace CAS
             return t;
         }
         
-        public void ParseInput()
+        public ExprNode ParseInput()
         {
-            ParseLine();
+            ExprNode tree = ParseLine();
             Expect(TokenType.EndOfInput);
+            return tree;
         }
-        public void ParseLine()
+        public ExprNode ParseLine()
         {
             Token token1 = tokenizer.Peek(1), token2 = tokenizer.Peek(2);
+            ExprNode tree = null;
 
             if ((token1.Type == TokenType.Identifier) && (token2.Type == TokenType.Assign))
             {
-                ParseAssignment();
+                tree = ParseAssignment();
             }
             else
             {
-                ExprNode node = ParseExpr(1, false);
-                return;
+                tree = ParseExpr(1, false);
             }
+
+            return tree;
         }
 
-        public void ParseAssignment()
+        public ExprNode ParseAssignment()
         {
             Token id = Expect(TokenType.Identifier);
 
             Expect(TokenType.Assign);
 
             ExprNode node = ParseExpr(1, false);
+
+            OpNode tree = new OpNode
+            {
+                Operator = Operator.Assign,
+                Left = new AtomNode
+                {
+                    Data = id.String,
+                    Type = AtomType.Identifier
+                },
+                Right = node
+            };
              
-            return;
+            return tree;
 
         }
 

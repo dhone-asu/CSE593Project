@@ -14,7 +14,7 @@ namespace CAS
             StringBuffer b = new StringBuffer(line);
             Tokenizer tokenizer = new Tokenizer(b);
             Parser parser = new Parser(tokenizer);
-            parser.ParseInput();
+            ExprNode tree = parser.ParseInput();
             return;
         }
     }
