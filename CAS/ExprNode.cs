@@ -29,7 +29,8 @@ namespace CAS
 
     public class FunctionNode : ExprNode
     {
-        public ExprNode[] Params { get; set; } 
+        public string Name { get; set; }
+        public List<ExprNode> Params { get; set; } 
     }
 
     public class AtomNode : ExprNode

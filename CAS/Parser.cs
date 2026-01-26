@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CAS
 {
-    public enum ParserContext { Assignment, Standalone, Params, Parentheses }
+    public enum ParserContext { General, Params }
     public class Parser
     {
         private Tokenizer tokenizer;
@@ -80,7 +80,7 @@ namespace CAS
             }
             else
             {
-                tree = ParseExpr(1, false);
+                tree = ParseExpr(1, false, ParserContext.General);
             }
 
             return tree;
@@ -92,7 +92,7 @@ namespace CAS
 
             Expect(TokenType.Assign);
 
-            ExprNode node = ParseExpr(1, false);
+            ExprNode node = ParseExpr(1, false, ParserContext.General);
 
             OpNode tree = new OpNode
             {
@@ -111,9 +111,9 @@ namespace CAS
 
         // Operator precedence parsing adapted from Eli Bendersky's website:
         //  https://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
-        public ExprNode ParseExpr(int minPrec, bool inParen)
+        public ExprNode ParseExpr(int minPrec, bool inParen, ParserContext context)
         {
-            ExprNode lhs = ParseAtom(inParen);
+            ExprNode lhs = ParseAtom(inParen, context);
             ExprNode rhs = null;
             Token cur = null;
 
@@ -122,6 +122,8 @@ namespace CAS
                 cur = tokenizer.Peek(1);
 
                 if ((cur.Type == TokenType.EndOfInput) || (inParen && cur.Type == TokenType.RParen))
+                    break;
+                else if (!inParen && context == ParserContext.Params && (cur.Type == TokenType.Comma || cur.Type == TokenType.RParen))
                     break;
 
                 Operator op = ParseOp();
@@ -136,7 +138,7 @@ namespace CAS
 
                 int nextMinPrec = (op == Operator.Pow) ? prec : prec + 1; // Exponentiation is right-associative
 
-                rhs = ParseExpr(nextMinPrec, inParen);
+                rhs = ParseExpr(nextMinPrec, inParen, context);
 
                 lhs = BuildOpNode(op, lhs, rhs);
             }
@@ -192,7 +194,7 @@ namespace CAS
             return OperatorMap[op.Type];
         }
 
-        public ExprNode ParseAtom(bool inParen)
+        public ExprNode ParseAtom(bool inParen, ParserContext context)
         {
             Token t = tokenizer.Peek(1);
 
@@ -204,12 +206,38 @@ namespace CAS
             else if (t.Type == TokenType.Identifier)
             {
                 t = Expect(TokenType.Identifier);
-                return new AtomNode { Data = t.String, Type = AtomType.Identifier };
+                Token t2 = tokenizer.Peek(1);
+
+                if (t2.Type == TokenType.LParen)
+                {
+                    Expect(TokenType.LParen);
+                    Token t3 = tokenizer.Peek(1);
+
+                    if (t3.Type == TokenType.RParen)
+                    {
+                        Expect(TokenType.RParen);
+                        return new FunctionNode
+                        {
+                            Name = t.String,
+                            Params = new List<ExprNode>()
+                        };
+                    }
+                    else
+                    {
+                        ExprNode function = ParseParams(t.String);
+                        Expect(TokenType.RParen);
+                        return function;
+                    }
+                }
+                else
+                {
+                    return new AtomNode { Data = t.String, Type = AtomType.Identifier };
+                }
             }
             else if (t.Type == TokenType.Minus)
             {
                 Expect(TokenType.Minus);
-                ExprNode node = ParseExpr(PrecedenceMap[Operator.Neg], inParen);
+                ExprNode node = ParseExpr(PrecedenceMap[Operator.Neg], inParen, context);
                 return new OpNode
                 {
                     Operator = Operator.Neg,
@@ -219,7 +247,7 @@ namespace CAS
             else if (t.Type == TokenType.LParen)
             {
                 Expect(TokenType.LParen);
-                ExprNode node = ParseExpr(1, true);
+                ExprNode node = ParseExpr(1, true, context);
                 Expect(TokenType.RParen);
                 return node;
             }
@@ -228,6 +256,35 @@ namespace CAS
                 SyntaxError($"Unexpected atom type '{t.Type}'");
                 return null;
             }
+        }
+
+        public FunctionNode ParseParams(string name)
+        {
+            ExprNode node1 = ParseExpr(1, false, ParserContext.Params);
+
+            Token t1 = tokenizer.Peek(1);
+
+            if (t1.Type == TokenType.RParen)
+            {
+                return new FunctionNode
+                {
+                    Name = name,
+                    Params = new List<ExprNode> { node1 }
+                };
+            }
+            else if (t1.Type == TokenType.Comma)
+            {
+                Expect(TokenType.Comma);
+                FunctionNode functionNode = ParseParams(name);
+                functionNode.Params.Insert(0, node1);
+                return functionNode;
+            }
+            else
+            {
+                SyntaxError($"Unexpected token '{t1.Type}' in parameter list for '{name}'");
+                return null;
+            }
+
         }
     }
 
