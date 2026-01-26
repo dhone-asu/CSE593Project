@@ -4,10 +4,12 @@ using System.Collections.Generic;
 namespace CAS
 {
     public enum ParserContext { General, Params }
+    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
+
     public class Parser
     {
         private Tokenizer tokenizer;
-        //public enum BinaryOperator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte }
+
         public static readonly Dictionary<Operator, int> PrecedenceMap = new Dictionary<Operator, int>
         {
             { Operator.Pow, 5 },

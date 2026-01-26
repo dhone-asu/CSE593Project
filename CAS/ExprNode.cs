@@ -6,18 +6,6 @@ using System.Threading.Tasks;
 
 namespace CAS
 {
-    /*public enum TokenType
-    {
-        Numeral, Identifier,
-        Plus, Minus, Div, Mult, Pow, Mod,
-        Eq, Neq, Gt, Lt, Gte, Lte,
-        Lpar, Rpar, Comma,
-        Assign,
-        Error,
-        EndOfInput
-    }*/
-    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
-
     public enum AtomType { Numeral, Identifier }
     public class ExprNode { }
     public class OpNode: ExprNode
