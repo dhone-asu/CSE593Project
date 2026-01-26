@@ -87,6 +87,8 @@ namespace CAS
                     {
                         return new Token { Type = TokenType.Mult };
                     }
+                case '^':
+                    return new Token { Type = TokenType.Pow };
                 case '%':
                     return new Token { Type = TokenType.Mod };
                 case '=':

@@ -225,7 +225,7 @@ namespace CAS
             }
             else
             {
-                SyntaxError($"Unexpected atom type");
+                SyntaxError($"Unexpected atom type '{t.Type}'");
                 return null;
             }
         }
