@@ -15,11 +15,19 @@ namespace CAS
         {
             string line = Console.ReadLine();
             StringBuffer b = new StringBuffer(line);
-            Tokenizer tokenizer = new Tokenizer(b);
-            Parser parser = new Parser(tokenizer);
-            ExprNode tree = parser.ParseInput();
+            try
+            {
+                Tokenizer tokenizer = new Tokenizer(b);
+                Parser parser = new Parser(tokenizer);
+                ExprNode tree = parser.ParseInput();
+                var result = Eval(tree);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{e.GetType().Name} has been thrown with message \"{e.Message}\"");
+                return;
+            }
 
-            var result = Eval(tree);
 
             return;
         }

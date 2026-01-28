@@ -201,6 +201,9 @@ namespace CAS
                     c = buffer.PeekChar();
                 }
 
+                if (!char.IsDigit(c))
+                    throw new TokenizerException("Exponent must follow E in scientific number");
+
                 while (char.IsDigit(c))
                 {
                     buffer.GetChar();
