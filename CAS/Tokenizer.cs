@@ -65,7 +65,7 @@ namespace CAS
 
             if (buffer.EndOfInput())
             {
-                return new Token { String = "", Type = TokenType.EndOfInput };
+                return new Token { Type = TokenType.EndOfInput };
             }
             else c = buffer.GetChar();
 
