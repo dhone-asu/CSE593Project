@@ -63,9 +63,6 @@ namespace CAS
         
         public ExprNode ParseInput()
         {
-            if (tokenizer.Peek(1).Type == TokenType.EndOfInput)
-                return null;
-
             ExprNode tree = ParseLine();
             Expect(TokenType.EndOfInput);
             return tree;
@@ -75,7 +72,9 @@ namespace CAS
             Token token1 = tokenizer.Peek(1), token2 = tokenizer.Peek(2);
             ExprNode tree = null;
 
-            if ((token1.Type == TokenType.Identifier) && (token2.Type == TokenType.Assign))
+            if (token1.Type == TokenType.EndOfInput)
+                return null;
+            else if ((token1.Type == TokenType.Identifier) && (token2.Type == TokenType.Assign))
             {
                 tree = ParseAssignment();
             }
