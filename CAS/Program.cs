@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,8 @@ namespace CAS
             Parser parser = new Parser(tokenizer);
             ExprNode tree = parser.ParseInput();
 
-            Console.WriteLine(Eval(tree));
+            var result = Eval(tree);
+
             return;
         }
         //public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
@@ -73,9 +75,9 @@ namespace CAS
             }
         }
 
-        static double Eval(ExprNode tree)
+        static ExprNode Eval(ExprNode tree)
         {
-            if (tree == null) return Double.NaN;
+            if (tree == null) return null;
             if (tree is OpNode)
             {
                 var opNode = (OpNode)tree;
@@ -84,35 +86,59 @@ namespace CAS
 
                 if (rightNode != null)
                 {
-                    double leftVal = Eval(leftNode);
-                    double rightVal = Eval(rightNode);
-                    double val = Compute(opNode.Operator, leftVal, rightVal);
+                    ExprNode leftResult = Eval(leftNode);
+                    ExprNode rightResult = Eval(rightNode);
+                    if ((leftResult is AtomNode && ((AtomNode)leftResult).Type == AtomType.Numeral) &&
+                        (rightResult is AtomNode && ((AtomNode)rightResult).Type == AtomType.Numeral))
+                    {
+                        double leftVal = 0, rightVal = 0;
 
-                    return val;
+                        if (double.TryParse(((AtomNode)leftResult).Data, out leftVal) &&
+                            double.TryParse(((AtomNode)rightResult).Data, out rightVal))
+                        {
+                            return new AtomNode
+                            {
+                                Type = AtomType.Numeral,
+                                Data = Compute(opNode.Operator, leftVal, rightVal).ToString()
+                            };
+                        }
+                        else
+                            throw new Exception($"One of '{((AtomNode)leftResult).Data}' or '{((AtomNode)rightResult).Data}' is invalid numeral");
+                    }
+                    else
+                        return new OpNode
+                        {
+                            Operator = opNode.Operator,
+                            Left = leftResult,
+                            Right = rightResult
+                        };
                 }
                 else
                 {
-                    double leftVal = Eval(leftNode);
-                    double val = Compute(opNode.Operator, leftVal, 0.0);
+                    ExprNode leftResult = Eval(leftNode);
 
-                    return val;
+                    if (leftResult is AtomNode && ((AtomNode)leftResult).Type == AtomType.Numeral)
+                    {
+                        double leftVal = 0;
+
+                        if (double.TryParse(((AtomNode)leftResult).Data, out leftVal))
+                        {
+                            return new AtomNode
+                            {
+                                Type = AtomType.Numeral,
+                                Data = Compute(opNode.Operator, leftVal, 0).ToString()
+                            };
+                        }
+                        else
+                            return opNode;
+                    }
+                    else
+                        return opNode;
                 }
             }
             else if (tree is AtomNode)
             {
-                var atomNode = (AtomNode)tree;
-                var s = atomNode.Data;
-                double val;
-
-                if (atomNode.Type == AtomType.Numeral)
-                {
-                    if (double.TryParse(s, out val))
-                        return val;
-                    else
-                        throw new Exception($"{s} is not a valid numeral");
-                }
-                else
-                    throw new Exception($"Identifiers not supported for evaluation");
+                return tree;
             }
             else
                 throw new Exception($"Node type '{tree.GetType()}' not supported for evaluation");
