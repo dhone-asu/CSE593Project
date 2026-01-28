@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +18,7 @@ namespace CAS
             Parser parser = new Parser(tokenizer);
             ExprNode tree = parser.ParseInput();
 
-            //Console.WriteLine(Traverse(tree));
+            Console.WriteLine(Eval(tree));
             return;
         }
         //public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
@@ -39,7 +41,7 @@ namespace CAS
             { Operator.Assign, "=" }
         };
 
-        static string Traverse(ExprNode tree)
+        static string ToPostfix(ExprNode tree)
         {
             if (tree == null) return "";
             if (tree is OpNode)
@@ -49,12 +51,12 @@ namespace CAS
                 var rightNode = opNode.Right;
                 if (rightNode != null)
                 {
-                    string s = $"{Traverse(leftNode)} {Traverse(rightNode)} {operatorToStringMap[opNode.Operator]}";
+                    string s = $"{ToPostfix(leftNode)} {ToPostfix(rightNode)} {operatorToStringMap[opNode.Operator]}";
                     return s;
                 }
                 else
                 {
-                    string s = $"{Traverse(leftNode)} {operatorToStringMap[opNode.Operator]}";
+                    string s = $"{ToPostfix(leftNode)} {operatorToStringMap[opNode.Operator]}";
                     return s;
                 }
             }
@@ -70,5 +72,73 @@ namespace CAS
                 //return null;
             }
         }
+
+        static double Eval(ExprNode tree)
+        {
+            if (tree == null) return Double.NaN;
+            if (tree is OpNode)
+            {
+                var opNode = (OpNode)tree;
+                var leftNode = opNode.Left;
+                var rightNode = opNode.Right;
+
+                if (rightNode != null)
+                {
+                    double leftVal = Eval(leftNode);
+                    double rightVal = Eval(rightNode);
+                    double val = Compute(opNode.Operator, leftVal, rightVal);
+
+                    return val;
+                }
+                else
+                {
+                    double leftVal = Eval(leftNode);
+                    double val = Compute(opNode.Operator, leftVal, 0.0);
+
+                    return val;
+                }
+            }
+            else if (tree is AtomNode)
+            {
+                var atomNode = (AtomNode)tree;
+                var s = atomNode.Data;
+                double val;
+
+                if (atomNode.Type == AtomType.Numeral)
+                {
+                    if (double.TryParse(s, out val))
+                        return val;
+                    else
+                        throw new Exception($"{s} is not a valid numeral");
+                }
+                else
+                    throw new Exception($"Identifiers not supported for evaluation");
+            }
+            else
+                throw new Exception($"Node type '{tree.GetType()}' not supported for evaluation");
+        }
+
+        static double Compute(Operator op, double a, double b)
+        {
+            switch (op)
+            {
+                case Operator.Plus:
+                    return a + b;
+                case Operator.Minus:
+                    return a - b;
+                case Operator.Mult:
+                    return a * b;
+                case Operator.Div:
+                    return a / b;
+                case Operator.Pow:
+                    return Math.Pow(a, b);
+                case Operator.Neg:
+                    return -a;
+                default:
+                    throw new Exception($"Operator {op} not supported for evaluation");
+            }
+        }
+
+
     }
 }
