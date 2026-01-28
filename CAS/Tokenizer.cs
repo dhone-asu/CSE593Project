@@ -186,6 +186,29 @@ namespace CAS
                 c = buffer.PeekChar();
             }
 
+            c = buffer.PeekChar();
+            
+            if (c == 'e' || c == 'E')  // Scientific number
+            {
+                buffer.GetChar();
+                str = str + c;
+                c = buffer.PeekChar();
+
+                if (c == '-' || c == '+')
+                {
+                    buffer.GetChar();
+                    str = str + c;
+                    c = buffer.PeekChar();
+                }
+
+                while (char.IsDigit(c))
+                {
+                    buffer.GetChar();
+                    str = str + c;
+                    c = buffer.PeekChar();
+                }
+            }
+
             return new Token { String = str, Type = TokenType.Numeral };
         }
 
