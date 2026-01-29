@@ -29,7 +29,6 @@ namespace CAS
 
     public class Function : IFunction
     {
-        public string Name { get; set; }
         public static ValueType GetValueType(ExprNode tree)
         {
             if (tree is AtomNode)
@@ -44,8 +43,8 @@ namespace CAS
             else
                 return ValueType.Expression;
         }
+        public string Name { get; set; }
         public GenericFunction Delegate { get; set; }
-
         public ValueType ReturnValue { get; set; }
         public ValueType[] Parameters { get; set; }
 
@@ -61,7 +60,8 @@ namespace CAS
 
                 ValueType type = GetValueType((ExprNode)parameters[i]);
 
-                if (Parameters[i] == ValueType.Expression && type == ValueType.Variable)
+                // Variable or Numeral may act as an Expression
+                if (Parameters[i] == ValueType.Expression && (type == ValueType.Variable || type == ValueType.Numeral))
                     continue;
                 else if (Parameters[i] == type)
                     continue;
@@ -96,11 +96,30 @@ namespace CAS
 
         public static object Sin(object[] parameters)
         {
-            var a = parameters[1];
-            ValueType type = Function.GetValueType(a);
+            var a = parameters[0];
+            ValueType type = Function.GetValueType((ExprNode)a);
 
             if (type == ValueType.Numeral)
-                return Math.Sin((double)((AtomNode)a).Data);
+                return new AtomNode
+                {
+                    Data = Math.Sin((double)((AtomNode)a).Data),
+                    Type = AtomType.Numeral
+                };
+            else
+                return a;
+        }
+
+        public static object Cos(object[] parameters)
+        {
+            var a = parameters[0];
+            ValueType type = Function.GetValueType((ExprNode)a);
+
+            if (type == ValueType.Numeral)
+                return new AtomNode
+                {
+                    Data = Math.Sin((double)((AtomNode)a).Data),
+                    Type = AtomType.Numeral
+                };
             else
                 return a;
         }
@@ -113,6 +132,25 @@ namespace CAS
         public Function GetFunction(string name)
         {
             return functions[name];
+        }
+
+        public NativeFunctionManager()
+        {
+            functions = new Dictionary<string, Function>();
+            functions["sin"] = new Function
+            {
+                Name = "sin",
+                Delegate = Sin,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
+            functions["cos"] = new Function
+            {
+                Name = "cos",
+                Delegate = Cos,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
         }
     }
 }

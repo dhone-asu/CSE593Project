@@ -15,7 +15,7 @@ namespace CAS
         {
             string line = Console.ReadLine();
             StringBuffer b = new StringBuffer(line);
-            try
+            //try
             {
                 Tokenizer tokenizer = new Tokenizer(b);
                 Parser parser = new Parser(tokenizer);
@@ -23,10 +23,10 @@ namespace CAS
                 var result = Eval(tree);
                 Console.WriteLine(((AtomNode)result).Data);
             }
-            catch (Exception e)
+            //catch (Exception e)
             {
-                Console.WriteLine($"{e.GetType().Name} has been thrown with message \"{e.Message}\"");
-                return;
+            //    Console.WriteLine($"{e.GetType().Name} has been thrown with message \"{e.Message}\"");
+            //    return;
             }
 
 
@@ -84,6 +84,8 @@ namespace CAS
             }
         }
 
+        static NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
+
         static ExprNode Eval(ExprNode tree)
         {
             if (tree == null) return null;
@@ -135,6 +137,24 @@ namespace CAS
             else if (tree is AtomNode)
             {
                 return tree;
+            }
+            else if (tree is FunctionNode)
+            {
+                FunctionNode functionNode = (FunctionNode)tree;
+                if (nativeFunctionManager.FunctionExists(functionNode.Name))
+                {
+                    object[] parameters = functionNode.Params.ToArray();
+                    for (int i = 0; i < parameters.Count(); i++)
+                    {
+                        parameters[i] = Eval((ExprNode)parameters[i]);
+                    }
+                    Function func = nativeFunctionManager.GetFunction(((FunctionNode)tree).Name);
+                    object result = func.Call(parameters);
+
+                    return (ExprNode)result;
+                }
+                else
+                    throw new Exception($"Cannot find function {functionNode.Name}");
             }
             else
                 throw new Exception($"Node type '{tree.GetType()}' not supported for evaluation");
