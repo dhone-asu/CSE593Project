@@ -23,7 +23,7 @@ namespace CAS
 
     public class AtomNode : ExprNode
     {        
-        public string Data { get; set; }
+        public object Data { get; set; }
         public AtomType Type { get; set; }
     }
 }

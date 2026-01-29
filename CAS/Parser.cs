@@ -201,7 +201,8 @@ namespace CAS
             if (t.Type == TokenType.Numeral)
             {
                 t = Expect(TokenType.Numeral);
-                return new AtomNode { Data = t.String, Type = AtomType.Numeral };
+                // Format of numeral has already been verified by Tokenizer
+                return new AtomNode { Data = double.Parse(t.String), Type = AtomType.Numeral };
             }
             else if (t.Type == TokenType.Identifier)
             {

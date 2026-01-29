@@ -21,6 +21,7 @@ namespace CAS
                 Parser parser = new Parser(tokenizer);
                 ExprNode tree = parser.ParseInput();
                 var result = Eval(tree);
+                Console.WriteLine(((AtomNode)result).Data);
             }
             catch (Exception e)
             {
@@ -73,7 +74,7 @@ namespace CAS
             else if (tree is AtomNode)
             {
                 var atomNode = (AtomNode)tree;
-                string s = atomNode.Data;
+                string s = atomNode.Data.ToString();
                 return s;
             }
             else
@@ -99,19 +100,12 @@ namespace CAS
                     if ((leftResult is AtomNode && ((AtomNode)leftResult).Type == AtomType.Numeral) &&
                         (rightResult is AtomNode && ((AtomNode)rightResult).Type == AtomType.Numeral))
                     {
-                        double leftVal = 0, rightVal = 0;
-
-                        if (double.TryParse(((AtomNode)leftResult).Data, out leftVal) &&
-                            double.TryParse(((AtomNode)rightResult).Data, out rightVal))
+                        double leftVal = (double)((AtomNode)leftResult).Data, rightVal = (double)((AtomNode)rightResult).Data;
+                        return new AtomNode
                         {
-                            return new AtomNode
-                            {
-                                Type = AtomType.Numeral,
-                                Data = Compute(opNode.Operator, leftVal, rightVal).ToString()
-                            };
-                        }
-                        else
-                            throw new Exception($"One of '{((AtomNode)leftResult).Data}' or '{((AtomNode)rightResult).Data}' is invalid numeral");
+                            Type = AtomType.Numeral,
+                            Data = Compute(opNode.Operator, leftVal, rightVal)
+                        };
                     }
                     else
                         return new OpNode
@@ -127,18 +121,12 @@ namespace CAS
 
                     if (leftResult is AtomNode && ((AtomNode)leftResult).Type == AtomType.Numeral)
                     {
-                        double leftVal = 0;
-
-                        if (double.TryParse(((AtomNode)leftResult).Data, out leftVal))
+                        double leftVal = (double)((AtomNode)leftResult).Data;
+                        return new AtomNode
                         {
-                            return new AtomNode
-                            {
-                                Type = AtomType.Numeral,
-                                Data = Compute(opNode.Operator, leftVal, 0).ToString()
-                            };
-                        }
-                        else
-                            return opNode;
+                            Type = AtomType.Numeral,
+                            Data = Compute(opNode.Operator, leftVal, 0)
+                        };
                     }
                     else
                         return opNode;
