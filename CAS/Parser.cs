@@ -16,6 +16,7 @@ namespace CAS
             { Operator.Neg, 4 },
             { Operator.Mult, 3},
             { Operator.Div, 3},
+            { Operator.Mod, 3},
             { Operator.Plus, 2 },
             { Operator.Minus, 2 },
             { Operator.Eq, 1 },
