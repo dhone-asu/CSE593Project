@@ -80,6 +80,7 @@ namespace CAS
         }
 
         static NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
+        static ConstantManager constantManager = new ConstantManager();
 
         static ExprNode Eval(ExprNode tree)
         {
@@ -131,7 +132,23 @@ namespace CAS
             }
             else if (tree is AtomNode)
             {
-                return tree;
+                AtomNode node = (AtomNode)tree;
+                
+                if (node.Type == AtomType.Identifier)
+                {
+                    if (constantManager.VariableExists((string)node.Data))
+                    {
+                        return new AtomNode
+                        {
+                            Type = AtomType.Numeral,
+                            Data = ((AtomNode)constantManager.GetVariable((string)node.Data).Value).Data
+                        };
+                    }
+                    else
+                        return tree;
+                }
+                else
+                    return tree;
             }
             else if (tree is FunctionNode)
             {
@@ -143,7 +160,7 @@ namespace CAS
                     {
                         parameters[i] = Eval((ExprNode)parameters[i]);
                     }
-                    Function func = nativeFunctionManager.GetFunction(((FunctionNode)tree).Name);
+                    IFunction func = nativeFunctionManager.GetFunction(((FunctionNode)tree).Name);
                     object result = func.Call(parameters);
 
                     return (ExprNode)result;

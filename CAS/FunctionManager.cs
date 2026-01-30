@@ -27,6 +27,12 @@ namespace CAS
         object Call(object[] parameters);
     }
 
+    public interface IFunctionManager
+    {
+        IFunction GetFunction(string name);
+        bool FunctionExists(string name);
+    }
+
     public class Function : IFunction
     {
         public static ValueType GetValueType(ExprNode tree)
@@ -53,7 +59,7 @@ namespace CAS
             if (Parameters.Length != parameters.Length)
                 return false;
 
-            for (int i = 0; i < parameters.Length; i++) 
+            for (int i = 0; i < parameters.Length; i++)
             {
                 if (!(parameters[i] is ExprNode))
                     return false;
@@ -83,11 +89,6 @@ namespace CAS
                 throw new ParameterException("Parameter mismatch");
             }
         }
-    }
-    public interface IFunctionManager
-    {
-        Function GetFunction(string name);
-        bool FunctionExists(string name);
     }
 
     public class NativeFunctionManager: IFunctionManager
@@ -129,7 +130,7 @@ namespace CAS
             return functions.ContainsKey(name);
         }
 
-        public Function GetFunction(string name)
+        public IFunction GetFunction(string name)
         {
             return functions[name];
         }
