@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CAS
 {
@@ -8,20 +9,18 @@ namespace CAS
     {
         static void Main(string[] args)
         {
-            string line = Console.ReadLine();
-            StringBuffer b = new StringBuffer(line);
-            //try
+            while (true)
             {
+                string line = Console.ReadLine();
+                StringBuffer b = new StringBuffer(line);
                 Tokenizer tokenizer = new Tokenizer(b);
                 Parser parser = new Parser(tokenizer);
                 ExprNode tree = parser.ParseInput();
                 var result = Eval(tree);
-                Console.WriteLine(((AtomNode)result).Data);
-            }
-            //catch (Exception e)
-            {
-            //    Console.WriteLine($"{e.GetType().Name} has been thrown with message \"{e.Message}\"");
-            //    return;
+                if (result is AtomNode)
+                    Console.WriteLine(((AtomNode)result).Data);
+                else
+                    Console.WriteLine(PrintExpression(result));
             }
 
 
@@ -46,6 +45,53 @@ namespace CAS
             { Operator.Neg, "-" },
             { Operator.Assign, "=" }
         };
+
+        static string PrintExpression(ExprNode tree)
+        {
+            if (tree == null) return "";
+            if (tree is OpNode)
+            {
+                var opNode = (OpNode)tree;
+                var leftNode = opNode.Left;
+                var rightNode = opNode.Right;
+
+                if (rightNode != null)
+                {
+                    string s = $"({PrintExpression(leftNode)} {operatorToStringMap[opNode.Operator]} {PrintExpression(rightNode)})";
+                    return s;
+                }
+                else
+                {
+                    string s = $"{operatorToStringMap[opNode.Operator]} ({PrintExpression(leftNode)})";
+                    return s;
+                }
+            }
+            else if (tree is AtomNode)
+            {
+                var atomNode = (AtomNode)tree;
+                string s = atomNode.Data.ToString();
+                return s;
+            }
+            else if (tree is FunctionNode)
+            {
+                var funcNode = (FunctionNode)tree;
+                string parameters = "";
+
+                if (funcNode.Params.Any())
+                {
+                    parameters = $"{PrintExpression(funcNode.Params[0])}";
+                    for (int i = 1; i < funcNode.Params.Count; i++)
+                    {
+                        string param = PrintExpression(funcNode.Params[i]);
+                        parameters += $"{parameters}, {param}";
+                    }
+                }
+                string s = $"{funcNode.Name}({parameters})";
+                return s;
+            }
+            else
+                throw new Exception("Node type not supported.");
+        }
 
         static string ToPostfix(ExprNode tree)
         {
