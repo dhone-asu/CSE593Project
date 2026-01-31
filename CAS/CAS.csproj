@@ -48,6 +48,7 @@
     <Compile Include="ExprNode.cs" />
     <Compile Include="ExtendedMath.cs" />
     <Compile Include="FunctionManager.cs" />
+    <Compile Include="NativeFunctionManager.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

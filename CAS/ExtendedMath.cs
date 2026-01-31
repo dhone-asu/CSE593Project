@@ -38,6 +38,21 @@ namespace CAS
             }
         }
 
+        public static double Asinh(double a)
+        {
+            return Math.Log(a+Math.Sqrt(1+a*a));
+        }
+
+        public static double Acosh(double a)
+        {
+            return Math.Log(a + Math.Sqrt(a * a - 1));
+        }
+
+        public static double Atanh(double a)
+        {
+            return Math.Log((1 + a) / (1 - a)) / 2.0;
+        }
+
         private static double LogGammaBaseFormula(double x)
         {
             double c = Math.Log(2 * Math.PI) / 2.0;
