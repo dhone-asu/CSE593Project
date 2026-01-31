@@ -114,7 +114,7 @@ namespace CAS
                     for (int i = 1; i < funcNode.Params.Count; i++)
                     {
                         string param = PrintExpression(funcNode.Params[i]);
-                        parameters += $"{parameters}, {param}";
+                        parameters = $"{parameters}, {param}";
                     }
                 }
                 string s = $"{funcNode.Name}({parameters})";
@@ -230,20 +230,26 @@ namespace CAS
             else if (tree is FunctionNode)
             {
                 FunctionNode functionNode = (FunctionNode)tree;
+                object[] parameters = functionNode.Params.ToArray();
+                for (int i = 0; i < parameters.Count(); i++)
+                {
+                    parameters[i] = Eval((ExprNode)parameters[i]);
+                }
+
                 if (nativeFunctionManager.FunctionExists(functionNode.Name))
                 {
-                    object[] parameters = functionNode.Params.ToArray();
-                    for (int i = 0; i < parameters.Count(); i++)
-                    {
-                        parameters[i] = Eval((ExprNode)parameters[i]);
-                    }
+
                     IFunction func = nativeFunctionManager.GetFunction(((FunctionNode)tree).Name);
                     object result = func.Call(parameters);
 
                     return (ExprNode)result;
                 }
                 else
-                    throw new Exception($"Cannot find function {functionNode.Name}");
+                    return new FunctionNode
+                    {
+                        Name = functionNode.Name,
+                        Params = new List<ExprNode>((ExprNode[])parameters)
+                    };
             }
             else
                 throw new Exception($"Node type '{tree.GetType()}' not supported for evaluation");

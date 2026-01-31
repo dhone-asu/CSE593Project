@@ -150,6 +150,24 @@ namespace CAS
             return RunOneParamMathFunction("cos", Math.Cos, parameters);
         }
 
+        public static object Tan(object[] parameters)
+        {
+            return RunOneParamMathFunction("tan", Math.Tan, parameters);
+        }
+        public static object Asin(object[] parameters)
+        {
+            return RunOneParamMathFunction("asin", Math.Asin, parameters);
+        }
+
+        public static object Acos(object[] parameters)
+        {
+            return RunOneParamMathFunction("acos", Math.Acos, parameters);
+        }
+        public static object Atan(object[] parameters)
+        {
+            return RunOneParamMathFunction("atan", Math.Atan, parameters);
+        }
+
         public static object Pow(object[] parameters)
         {
             return RunTwoParamMathFunction("pow", Math.Pow, parameters);
@@ -195,6 +213,34 @@ namespace CAS
             {
                 Name = "cos",
                 Delegate = Cos,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
+            functions["tan"] = new Function
+            {
+                Name = "tan",
+                Delegate = Tan,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
+            functions["asin"] = new Function
+            {
+                Name = "asin",
+                Delegate = Asin,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
+            functions["acos"] = new Function
+            {
+                Name = "acos",
+                Delegate = Acos,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
+            functions["atan"] = new Function
+            {
+                Name = "atan",
+                Delegate = Atan,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
