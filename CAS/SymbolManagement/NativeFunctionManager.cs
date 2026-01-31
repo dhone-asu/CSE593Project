@@ -121,6 +121,10 @@ namespace CAS.SymbolManagement
             return RunOneParamMathFunction("log", Math.Log, parameters);
         }
 
+        public static object Sqrt(object[] parameters)
+        {
+            return RunOneParamMathFunction("sqrt", Math.Sqrt, parameters);
+        }
         public static object Exit(object[] parameters)
         {
             Environment.Exit(0);
@@ -249,6 +253,13 @@ namespace CAS.SymbolManagement
             {
                 Name = "ln",
                 Delegate = Log,
+                Parameters = new ValueType[] { ValueType.Expression },
+                ReturnValue = ValueType.Expression
+            };
+            functions["sqrt"] = new Function
+            {
+                Name = "sqrt",
+                Delegate = Sqrt,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
