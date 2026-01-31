@@ -9,6 +9,7 @@ namespace CAS
 {
     public class ExtendedMath
     {
+        public static readonly double EulerMascheroni = 0.57721566490153286060651209;
         public static double Frac(double a)
         {
             return a % 1.0;

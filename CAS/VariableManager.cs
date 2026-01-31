@@ -50,6 +50,9 @@ namespace CAS
         {
             constants["pi"] = new Constant("pi", new AtomNode { Data = Math.PI, Type = AtomType.Numeral });
             constants["e"] = new Constant("e", new AtomNode { Data = Math.E, Type = AtomType.Numeral });
+            constants["inf"] = new Constant("inf", new AtomNode { Data = double.PositiveInfinity, Type = AtomType.Numeral });
+            constants["em"] = 
+                new Constant("em", new AtomNode { Data = ExtendedMath.EulerMascheroni, Type = AtomType.Numeral });
         }
     }
 }
