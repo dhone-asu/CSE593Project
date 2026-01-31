@@ -36,5 +36,22 @@ namespace CAS
                 return ans;
             }
         }
+
+        private static double LogGammaBaseFormula(double x)
+        {
+            double c = Math.Log(2 * Math.PI) / 2.0;
+
+            double logGamma = c + (x - 0.5) * Math.Log(x) - x
+                + 1.0 / x * (1.0 / 12.0 - 1 / (x * x) * (1.0 / 360.0 - 1.0 / (x * x) * (1.0 / 1260.0 - 1.0 / (x * x) * (1.0 / 1680.0-1.0/(x*x)*(1.0/1188.0)))));
+
+            return logGamma;
+        }
+
+        public static double CorrectedLogGamma(double x)
+        {
+            double c = LogGammaBaseFormula(x + 6) - Math.Log(x + 5) - Math.Log(x + 4) - Math.Log(x + 3) - Math.Log(x + 2) - Math.Log(x + 1) - Math.Log(x);
+            return c;
+        }
+
     }
 }
