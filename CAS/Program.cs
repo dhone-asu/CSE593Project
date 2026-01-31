@@ -12,14 +12,26 @@ namespace CAS
     {
         static void Main(string[] args)
         {
+            string last = "";
             while (true)
             {
                 string line = Console.ReadLine();
+                if (string.IsNullOrEmpty(line))
+                {
+                    Console.WriteLine(last);
+                    line = last;
+                }
+                last = line;
                 StringBuffer b = new StringBuffer(line);
                 Tokenizer tokenizer = new Tokenizer(b);
                 Parser parser = new Parser(tokenizer);
                 ExprNode tree = parser.ParseInput();
                 var result = Eval(tree);
+                variableManager["ans"] = new Variable
+                {
+                    Name = "ans",
+                    Value = result
+                };
                 if (result is AtomNode)
                     Console.WriteLine(((AtomNode)result).Data);
                 else
@@ -159,6 +171,7 @@ namespace CAS
 
         static NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
         static ConstantManager constantManager = new ConstantManager();
+        static VariableManager variableManager = new VariableManager();
 
         static ExprNode Eval(ExprNode tree)
         {
@@ -221,6 +234,10 @@ namespace CAS
                             Type = AtomType.Numeral,
                             Data = ((AtomNode)constantManager.GetVariable((string)node.Data).Value).Data
                         };
+                    }
+                    else if (variableManager.VariableExists((string)node.Data))
+                    {
+                        return variableManager[(string)node.Data].Value;
                     }
                     else
                         return tree;
