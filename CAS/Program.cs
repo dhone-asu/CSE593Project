@@ -23,6 +23,7 @@ namespace CAS
                     Console.WriteLine(((AtomNode)result).Data);
                 else
                     Console.WriteLine(PrintExpression(result));
+                Console.WriteLine();
             }
 
 
@@ -56,15 +57,43 @@ namespace CAS
                 var opNode = (OpNode)tree;
                 var leftNode = opNode.Left;
                 var rightNode = opNode.Right;
+                int treePrec = Parser.PrecedenceMap[opNode.Operator];
+                int leftPrec = 0, rightPrec = 0;
+                string leftExpr = null;
+                string rightExpr = null;
 
-                if (rightNode != null)
+                if (leftNode is OpNode)
                 {
-                    string s = $"({PrintExpression(leftNode)} {operatorToStringMap[opNode.Operator]} {PrintExpression(rightNode)})";
+                    leftPrec = Parser.PrecedenceMap[((OpNode)leftNode).Operator];
+
+                    leftExpr = PrintExpression(leftNode);
+
+                    if (leftPrec > 0 && leftPrec < treePrec)
+                        leftExpr = $"({leftExpr})";
+                }
+                else
+                    leftExpr = PrintExpression(leftNode);
+                if (rightNode is OpNode)
+                {
+                    rightPrec = Parser.PrecedenceMap[((OpNode)rightNode).Operator];
+                    rightExpr = PrintExpression(rightNode);
+
+                    if (rightPrec > 0 && rightPrec < treePrec)
+                        rightExpr = $"({rightExpr})";
+                }
+                else 
+                    rightExpr = PrintExpression(rightNode);
+
+
+
+                if (rightExpr != null)
+                {
+                    string s = $"{leftExpr} {operatorToStringMap[opNode.Operator]} {rightExpr}";
                     return s;
                 }
                 else
                 {
-                    string s = $"{operatorToStringMap[opNode.Operator]} ({PrintExpression(leftNode)})";
+                    string s = $"{operatorToStringMap[opNode.Operator]} {rightExpr}";
                     return s;
                 }
             }
