@@ -6,14 +6,71 @@ using System.Threading.Tasks;
 
 namespace CAS.SymbolManagement
 {
+    public class NativeFunction : IFunction
+    {
+        public static ValueType GetValueType(ExprNode tree)
+        {
+            if (tree is AtomNode)
+            {
+                AtomNode atom = (AtomNode)tree;
+
+                if (atom.Type == AtomType.Numeral)
+                    return ValueType.Numeral;
+                else
+                    return ValueType.Variable;
+            }
+            else
+                return ValueType.Expression;
+        }
+        public string Name { get; set; }
+        public GenericFunction Delegate { get; set; }
+        public ValueType ReturnValue { get; set; }
+        public ValueType[] Parameters { get; set; }
+
+        public bool CheckParameterTypes(object[] parameters)
+        {
+            if (Parameters.Length != parameters.Length)
+                return false;
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (!(parameters[i] is ExprNode))
+                    return false;
+
+                ValueType type = GetValueType((ExprNode)parameters[i]);
+
+                // Variable or Numeral may act as an Expression
+                if (Parameters[i] == ValueType.Expression && (type == ValueType.Variable || type == ValueType.Numeral))
+                    continue;
+                else if (Parameters[i] == type)
+                    continue;
+                else
+                    return false;
+            }
+
+            return true;
+        }
+
+        public object Call(object[] parameters)
+        {
+            if (CheckParameterTypes(parameters))
+            {
+                return Delegate(parameters);
+            }
+            else
+            {
+                throw new ParameterException("Parameter mismatch");
+            }
+        }
+    }
     public class NativeFunctionManager : IFunctionManager
     {
-        private Dictionary<string, Function> functions { get; set; }
+        private Dictionary<string, NativeFunction> functions { get; set; }
 
         private static object RunOneParamMathFunction(string name, Func<double, double> func, object[] parameters)
         {
             var param0 = parameters[0];
-            ValueType type = Function.GetValueType((ExprNode)param0);
+            ValueType type = NativeFunction.GetValueType((ExprNode)param0);
 
 
             if (type == ValueType.Numeral)
@@ -35,8 +92,8 @@ namespace CAS.SymbolManagement
         {
             var param0 = parameters[0];
             var param1 = parameters[1];
-            ValueType type0 = Function.GetValueType((ExprNode)param0);
-            ValueType type1 = Function.GetValueType((ExprNode)param1);
+            ValueType type0 = NativeFunction.GetValueType((ExprNode)param0);
+            ValueType type1 = NativeFunction.GetValueType((ExprNode)param1);
 
 
             if ((type0 == ValueType.Numeral) && (type1 == ValueType.Numeral))
@@ -143,120 +200,120 @@ namespace CAS.SymbolManagement
 
         public NativeFunctionManager()
         {
-            functions = new Dictionary<string, Function>();
-            functions["sin"] = new Function
+            functions = new Dictionary<string, NativeFunction>();
+            functions["sin"] = new NativeFunction
             {
                 Name = "sin",
                 Delegate = Sin,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["cos"] = new Function
+            functions["cos"] = new NativeFunction
             {
                 Name = "cos",
                 Delegate = Cos,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["tan"] = new Function
+            functions["tan"] = new NativeFunction
             {
                 Name = "tan",
                 Delegate = Tan,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["asin"] = new Function
+            functions["asin"] = new NativeFunction
             {
                 Name = "asin",
                 Delegate = Asin,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["acos"] = new Function
+            functions["acos"] = new NativeFunction
             {
                 Name = "acos",
                 Delegate = Acos,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["atan"] = new Function
+            functions["atan"] = new NativeFunction
             {
                 Name = "atan",
                 Delegate = Atan,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["sinh"] = new Function
+            functions["sinh"] = new NativeFunction
             {
                 Name = "sinh",
                 Delegate = Sinh,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["cosh"] = new Function
+            functions["cosh"] = new NativeFunction
             {
                 Name = "cosh",
                 Delegate = Cosh,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["tanh"] = new Function
+            functions["tanh"] = new NativeFunction
             {
                 Name = "tanh",
                 Delegate = Tanh,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["asinh"] = new Function
+            functions["asinh"] = new NativeFunction
             {
                 Name = "asinh",
                 Delegate = Asinh,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["acosh"] = new Function
+            functions["acosh"] = new NativeFunction
             {
                 Name = "acosh",
                 Delegate = Acosh,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["atanh"] = new Function
+            functions["atanh"] = new NativeFunction
             {
                 Name = "atanh",
                 Delegate = Atanh,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["pow"] = new Function
+            functions["pow"] = new NativeFunction
             {
                 Name = "pow",
                 Delegate = Pow,
                 Parameters = new ValueType[] { ValueType.Expression, ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["exp"] = new Function
+            functions["exp"] = new NativeFunction
             {
                 Name = "exp",
                 Delegate = Exp,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["log"] = new Function
+            functions["log"] = new NativeFunction
             {
                 Name = "log",
                 Delegate = Log,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["ln"] = new Function
+            functions["ln"] = new NativeFunction
             {
                 Name = "ln",
                 Delegate = Log,
                 Parameters = new ValueType[] { ValueType.Expression },
                 ReturnValue = ValueType.Expression
             };
-            functions["sqrt"] = new Function
+            functions["sqrt"] = new NativeFunction
             {
                 Name = "sqrt",
                 Delegate = Sqrt,
@@ -264,7 +321,7 @@ namespace CAS.SymbolManagement
                 ReturnValue = ValueType.Expression
             };
 
-            functions["exit"] = new Function
+            functions["exit"] = new NativeFunction
             {
                 Name = "exit",
                 Delegate = Exit,
