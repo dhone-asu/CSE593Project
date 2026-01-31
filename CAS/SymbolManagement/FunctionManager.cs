@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAS
+namespace CAS.SymbolManagement
 {
     public delegate object GenericFunction(object[] parameters);
     public enum ValueType { None, Numeral, Variable, Expression };
