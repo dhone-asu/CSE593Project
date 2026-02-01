@@ -11,12 +11,6 @@ namespace CAS.SymbolManagement
     public delegate object GenericFunction(object[] parameters);
     public enum ValueType { None, Numeral, Variable, Expression };
 
-    public class ParameterException: Exception
-    {
-        public ParameterException(string message) : base(message) { }
-        public ParameterException(): base() { }
-    }
-
     public interface IFunction
     {
         string Name { get; set; }

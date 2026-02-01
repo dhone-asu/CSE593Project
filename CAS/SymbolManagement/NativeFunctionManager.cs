@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace CAS.SymbolManagement
 {
+    public class ParameterException : Exception
+    {
+        public ParameterException(string message) : base(message) { }
+        public ParameterException() : base() { }
+    }
     public class NativeFunction : IFunction
     {
         public static ValueType GetValueType(ExprNode tree)
