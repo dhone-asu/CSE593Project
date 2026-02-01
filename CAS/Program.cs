@@ -94,19 +94,19 @@ namespace CAS
                     if (rightPrec > 0 && rightPrec < treePrec)
                         rightExpr = $"({rightExpr})";
                 }
-                else 
+                else if (rightNode != null)
                     rightExpr = PrintExpression(rightNode);
 
 
 
-                if (rightExpr != null)
+                if (!string.IsNullOrEmpty(rightExpr))
                 {
                     string s = $"{leftExpr} {operatorToStringMap[opNode.Operator]} {rightExpr}";
                     return s;
                 }
                 else
                 {
-                    string s = $"{operatorToStringMap[opNode.Operator]} {rightExpr}";
+                    string s = $"{operatorToStringMap[opNode.Operator]}{leftExpr}";
                     return s;
                 }
             }
