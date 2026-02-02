@@ -27,7 +27,7 @@ namespace CAS
                 Parser parser = new Parser(tokenizer);
                 ExprNode tree = parser.ParseInput();
                 var result = Eval(tree);
-                variableManager["ans"] = new Variable
+                variableManager["ans"] = new UserVariable
                 {
                     Name = "ans",
                     Value = result
@@ -171,7 +171,7 @@ namespace CAS
 
         static NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
         static ConstantManager constantManager = new ConstantManager();
-        static VariableManager variableManager = new VariableManager();
+        static UserVariableManager variableManager = new UserVariableManager();
 
         static ExprNode Eval(ExprNode tree)
         {

@@ -10,8 +10,9 @@ namespace CAS
     public class Evaluator
     {
         ConstantManager constantManager = new ConstantManager();
-        VariableManager variableManager = new VariableManager();
+        UserVariableManager variableManager = new UserVariableManager();
         NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
+        UserFunctionManager userFunctionManager = new UserFunctionManager();
         public Evaluator() { }
     }
 }
