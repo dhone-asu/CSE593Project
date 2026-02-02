@@ -12,19 +12,20 @@ namespace CAS
 
         public static readonly Dictionary<Operator, int> PrecedenceMap = new Dictionary<Operator, int>
         {
-            { Operator.Pow, 5 },
-            { Operator.Neg, 4 },
-            { Operator.Mult, 3},
-            { Operator.Div, 3},
-            { Operator.Mod, 3},
-            { Operator.Plus, 2 },
-            { Operator.Minus, 2 },
-            { Operator.Eq, 1 },
-            { Operator.Neq, 1 },
-            { Operator.Gt, 1 },
-            { Operator.Lt, 1 },
-            { Operator.Gte, 1 },
-            { Operator.Lte, 1 },
+            { Operator.Pow, 6 },
+            { Operator.Neg, 5 },
+            { Operator.Mult, 4 },
+            { Operator.Div, 4 },
+            { Operator.Mod, 4 },
+            { Operator.Plus, 3 },
+            { Operator.Minus, 3 },
+            { Operator.Eq, 2 },
+            { Operator.Neq, 2 },
+            { Operator.Gt, 2 },
+            { Operator.Lt, 2 },
+            { Operator.Gte, 2 },
+            { Operator.Lte, 2 },
+            { Operator.Assign, 1 }
         };
 
         public static readonly Dictionary<TokenType, Operator> TokenToOperatorMap = new Dictionary<TokenType, Operator>
@@ -40,6 +41,7 @@ namespace CAS
             {TokenType.Lt, Operator.Lt},
             {TokenType.Gte, Operator.Gte},
             {TokenType.Lte, Operator.Lte},
+            {TokenType.Assign, Operator.Assign}
         };
 
         public Parser(Tokenizer tokenizer)
@@ -69,45 +71,10 @@ namespace CAS
             return tree;
         }
         public ExprNode ParseLine()
-        {
-            Token token1 = tokenizer.Peek(1), token2 = tokenizer.Peek(2);
-            ExprNode tree = null;
-
-            if (token1.Type == TokenType.EndOfInput)
-                return null;
-            else if ((token1.Type == TokenType.Identifier) && (token2.Type == TokenType.Assign))
-            {
-                tree = ParseAssignment();
-            }
-            else
-            {
-                tree = ParseExpr(1, false, ParserContext.General);
-            }
+       {
+            ExprNode tree = ParseExpr(0, false, ParserContext.General);
 
             return tree;
-        }
-
-        public ExprNode ParseAssignment()
-        {
-            Token id = Expect(TokenType.Identifier);
-
-            Expect(TokenType.Assign);
-
-            ExprNode node = ParseExpr(1, false, ParserContext.General);
-
-            OpNode tree = new OpNode
-            {
-                Operator = Operator.Assign,
-                Left = new AtomNode
-                {
-                    Data = id.String,
-                    Type = AtomType.Identifier
-                },
-                Right = node
-            };
-             
-            return tree;
-
         }
 
         // Operator precedence parsing adapted from Eli Bendersky's website:
@@ -186,6 +153,8 @@ namespace CAS
                 op = Expect(TokenType.Gte);
             else if (t.Type == TokenType.Lte)
                 op = Expect(TokenType.Lte);
+            else if (t.Type == TokenType.Assign)
+                op = Expect(TokenType.Assign);
             else
             {
                 SyntaxError($"Unexpected operator '{t.Type}'");
