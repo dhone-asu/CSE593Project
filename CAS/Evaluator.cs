@@ -234,7 +234,7 @@ namespace CAS
             }
             else
             {
-                return Eval(tree);
+                return EvaluateNode(tree);
             }
 
         }
@@ -256,19 +256,19 @@ namespace CAS
         }
 
 
-        private ExprNode Eval(ExprNode tree)
+        private ExprNode EvaluateNode(ExprNode node)
         {
-            if (tree == null) return null;
-            if (tree is OpNode)
+            if (node == null) return null;
+            if (node is OpNode)
             {
-                var opNode = (OpNode)tree;
+                var opNode = (OpNode)node;
                 var leftNode = opNode.Left;
                 var rightNode = opNode.Right;
 
                 if (rightNode != null)
                 {
-                    ExprNode leftResult = Eval(leftNode);
-                    ExprNode rightResult = Eval(rightNode);
+                    ExprNode leftResult = EvaluateNode(leftNode);
+                    ExprNode rightResult = EvaluateNode(rightNode);
                     if ((leftResult is AtomNode && ((AtomNode)leftResult).Type == AtomType.Numeral) &&
                         (rightResult is AtomNode && ((AtomNode)rightResult).Type == AtomType.Numeral))
                     {
@@ -289,7 +289,7 @@ namespace CAS
                 }
                 else
                 {
-                    ExprNode leftResult = Eval(leftNode);
+                    ExprNode leftResult = EvaluateNode(leftNode);
 
                     if (leftResult is AtomNode && ((AtomNode)leftResult).Type == AtomType.Numeral)
                     {
@@ -304,31 +304,31 @@ namespace CAS
                         return opNode;
                 }
             }
-            else if (tree is AtomNode)
+            else if (node is AtomNode)
             {
-                AtomNode node = (AtomNode)tree;
+                AtomNode atomNode = (AtomNode)node;
 
-                if (node.Type == AtomType.Identifier)
+                if (atomNode.Type == AtomType.Identifier)
                 {
-                    var variable = GetVariable((string)node.Data);
+                    var variable = GetVariable((string)atomNode.Data);
 
                     if (variable != null)
                     {
                         return variable.Value;
                     }
                     else
-                        return tree;
+                        return atomNode;
                 }
                 else
-                    return tree;
+                    return atomNode;
             }
-            else if (tree is FunctionNode)
+            else if (node is FunctionNode)
             {
-                FunctionNode functionNode = (FunctionNode)tree;
+                FunctionNode functionNode = (FunctionNode)node;
                 object[] parameters = functionNode.Params.ToArray();
                 for (int i = 0; i < parameters.Count(); i++)
                 {
-                    parameters[i] = Eval((ExprNode)parameters[i]);
+                    parameters[i] = EvaluateNode((ExprNode)parameters[i]);
                 }
 
                 IFunction function = GetFunction(functionNode.Name);
@@ -347,7 +347,7 @@ namespace CAS
                     };
             }
             else
-                throw new Exception($"Node type '{tree.GetType()}' not supported for evaluation");
+                throw new Exception($"Node type '{node.GetType()}' not supported for evaluation");
         }
 
         public override string ToString()
