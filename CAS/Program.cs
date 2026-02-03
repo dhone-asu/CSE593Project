@@ -25,7 +25,6 @@ namespace CAS
                 last = line;
                 Evaluator evaluator = new Evaluator(line) { SessionManager = sessionManager };
                 var result = evaluator.Evaluate();
-                Evaluator resultEvaluator = new Evaluator(result);
                 sessionManager.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
@@ -34,7 +33,7 @@ namespace CAS
                 if (result is AtomNode)
                     Console.WriteLine(((AtomNode)result).Data);
                 else
-                    Console.WriteLine(resultEvaluator.ToString());
+                    Console.WriteLine(Evaluator.PrintExpression(result));
                 Console.WriteLine();
             }
 
