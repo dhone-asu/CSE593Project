@@ -54,12 +54,12 @@ namespace CAS
 
         public ExprNode Tree { get { return tree; } }
 
-        private string PrintExpression(ExprNode tree)
+        public static string PrintExpression(ExprNode node)
         {
-            if (tree == null) return "";
-            if (tree is OpNode)
+            if (node == null) return "";
+            if (node is OpNode)
             {
-                var opNode = (OpNode)tree;
+                var opNode = (OpNode)node;
                 var leftNode = opNode.Left;
                 var rightNode = opNode.Right;
                 int treePrec = Parser.PrecedenceMap[opNode.Operator];
@@ -102,15 +102,15 @@ namespace CAS
                     return s;
                 }
             }
-            else if (tree is AtomNode)
+            else if (node is AtomNode)
             {
-                var atomNode = (AtomNode)tree;
+                var atomNode = (AtomNode)node;
                 string s = atomNode.Data.ToString();
                 return s;
             }
-            else if (tree is FunctionNode)
+            else if (node is FunctionNode)
             {
-                var funcNode = (FunctionNode)tree;
+                var funcNode = (FunctionNode)node;
                 string parameters = "";
 
                 if (funcNode.Params.Any())
