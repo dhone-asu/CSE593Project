@@ -38,7 +38,7 @@ namespace CAS
         };
 
         ExprNode tree;
-        SessionManager SessionManager { get; set; }
+        public SessionManager SessionManager { get; set; }
         public Evaluator(ExprNode expression) 
         {
             tree = expression;
@@ -229,21 +229,8 @@ namespace CAS
             {
                 OpNode node = (OpNode)tree;
 
-                if (node.Left is AtomNode && ((AtomNode)node.Left).Type == AtomType.Identifier)
-                {
-                    SetVariable((string)((AtomNode)node.Left).Data, node.Right);
-                    return null;
-                }
-                else if (node.Left is FunctionNode && ParametersAreIdentifiers((FunctionNode)node.Left))
-                {
-                    UserFunction userFunction = new UserFunction();
-                    userFunction.Expression = node.Right;
-                    SetFunction((string)((FunctionNode)node.Left).Name, userFunction);
-                    return null;
-                }
-                else
-                    throw new EvaluatorException("Left-hand side must be variable or function identifier");
-
+                Assign(node.Left, node.Right);
+                return tree;
             }
             else
             {
@@ -254,7 +241,18 @@ namespace CAS
 
         public void Assign(ExprNode left,  ExprNode right)
         {
-
+            if (left is AtomNode && ((AtomNode)left).Type == AtomType.Identifier)
+            {
+                SetVariable((string)((AtomNode)left).Data, right);
+            }
+            else if (left is FunctionNode && ParametersAreIdentifiers((FunctionNode)left))
+            {
+                UserFunction userFunction = new UserFunction();
+                userFunction.Expression = right;
+                SetFunction((string)((FunctionNode)left).Name, userFunction);
+            }
+            else
+                throw new EvaluatorException("Left-hand side must be variable or function identifier");
         }
 
 

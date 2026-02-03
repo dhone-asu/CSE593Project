@@ -23,7 +23,7 @@ namespace CAS
                     line = last;
                 }
                 last = line;
-                Evaluator evaluator = new Evaluator(line);
+                Evaluator evaluator = new Evaluator(line) { SessionManager = sessionManager };
                 var result = evaluator.Evaluate();
                 Evaluator resultEvaluator = new Evaluator(result);
                 sessionManager.UserVariableManager.SetVariable("ans", new UserVariable
