@@ -17,6 +17,7 @@ namespace CAS.SymbolManagement
 
         public ExprNode Expression { get; set; }
 
+        public string[] ParameterNames { get; set; }
         public ValueType[] Parameters { get; set; }
         public ValueType ReturnValue { get; set; }
 
@@ -34,7 +35,7 @@ namespace CAS.SymbolManagement
     {
         public Dictionary<string, UserFunction> UserFunctions { get; set; } = new Dictionary<string, UserFunction>();
 
-
+        public SessionManager SessionManager { get; set; }
         public IFunction GetFunction(string name)
         {
             return UserFunctions[name];

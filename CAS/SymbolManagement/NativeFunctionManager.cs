@@ -70,6 +70,7 @@ namespace CAS.SymbolManagement
     }
     public class NativeFunctionManager : IFunctionManager
     {
+        public SessionManager SessionManager { get; set; }
         private Dictionary<string, NativeFunction> functions { get; set; }
 
         private static object RunOneParamMathFunction(string name, Func<double, double> func, object[] parameters)
@@ -191,6 +192,22 @@ namespace CAS.SymbolManagement
         {
             Environment.Exit(0);
             return null;
+        }
+
+        public object Subst(object[] parameters)
+        {
+            ExprNode expression = (ExprNode)parameters[0];
+            string symbol = (string)((AtomNode)parameters[1]).Data;
+            ExprNode value = (ExprNode)parameters[2];
+
+            var result = Evaluator.Substitute(expression, symbol, value);
+            if (SessionManager != null)
+            {
+                var evaluator = new Evaluator(result) { SessionManager = SessionManager };
+                return evaluator.Evaluate();
+            }
+            else
+                return result;
         }
 
         public bool FunctionExists(string name)
@@ -332,6 +349,14 @@ namespace CAS.SymbolManagement
                 Delegate = Exit,
                 Parameters = new ValueType[] { },
                 ReturnValue = ValueType.None
+            };
+
+            functions["subst"] = new NativeFunction
+            {
+                Name = "subst",
+                Delegate = Subst,
+                Parameters = new ValueType[] { ValueType.Expression, ValueType.Variable, ValueType.Expression },
+                ReturnValue = ValueType.Expression
             };
         }
     }

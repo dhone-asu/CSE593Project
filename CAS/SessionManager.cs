@@ -14,6 +14,12 @@ namespace CAS
         NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
         UserFunctionManager userFunctionManager = new UserFunctionManager();
 
+        public SessionManager()
+        {
+            nativeFunctionManager.SessionManager = this;
+            userFunctionManager.SessionManager = this;
+        }
+
         public ConstantManager ConstantManager { get { return constantManager; } }
         public UserVariableManager UserVariableManager { get {return userVariableManager; } }
         public NativeFunctionManager NativeFunctionManager { get { return nativeFunctionManager; } }

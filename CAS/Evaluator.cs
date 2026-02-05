@@ -236,7 +236,45 @@ namespace CAS
             {
                 return EvaluateNode(tree);
             }
+        }
 
+        public static ExprNode Substitute(ExprNode expression, string symbol, ExprNode value)
+        {
+            if (expression == null) return null;
+
+            if (expression is OpNode)
+            {
+                OpNode opNode = (OpNode)expression;
+
+                opNode.Left = Substitute(opNode.Left, symbol, value);
+                opNode.Right = Substitute(opNode.Right, symbol, value);
+
+                return opNode;
+            }
+            else if (expression is FunctionNode)
+            {
+                FunctionNode functionNode = (FunctionNode)expression;
+
+                for (int i = 0; i < functionNode.Params.Count; i++)
+                {
+                    functionNode.Params[i] = Substitute(functionNode.Params[i], symbol, value);
+                }
+
+                return functionNode;
+            }
+            else if (expression is AtomNode)
+            {
+                AtomNode atomNode = (AtomNode)expression;
+
+                if ((atomNode.Type == AtomType.Identifier) && ((string)atomNode.Data == symbol))
+                {
+                    return value;
+                }
+                else
+                    return expression;
+            }
+            else
+                throw new EvaluatorException("Unknown expression node type");
         }
 
         public void Assign(ExprNode left,  ExprNode right)
