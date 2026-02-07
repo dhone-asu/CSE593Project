@@ -19,8 +19,8 @@ namespace CAS.SymbolManagement
         public ExprNode Expression { get; set; }
 
         public string[] ParameterNames { get; set; }
-        public ValueType[] Parameters { get; set; }
-        public ValueType ReturnValue { get; set; }
+        public ParamType[] Parameters { get; set; }
+        public ParamType ReturnValue { get; set; }
 
         public bool CheckParameterTypes(object[] parameters)
         {

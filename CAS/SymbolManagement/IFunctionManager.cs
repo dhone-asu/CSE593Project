@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 namespace CAS.SymbolManagement
 {
     public delegate object GenericFunction(object[] parameters);
-    public enum ValueType { None, Numeral, Variable, Expression };
+    public enum ParamType { None, Numeral, Variable, Expression };
 
     public interface IFunction
     {
         string Name { get; set; }
         GenericFunction Delegate { get; set; }
-        ValueType ReturnValue { get; set; }
-        ValueType[] Parameters {  get; set; }
+        ParamType ReturnValue { get; set; }
+        ParamType[] Parameters {  get; set; }
         bool CheckParameterTypes(object[] parameters);
         object Call(object[] parameters);
     }

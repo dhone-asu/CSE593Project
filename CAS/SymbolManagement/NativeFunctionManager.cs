@@ -13,24 +13,24 @@ namespace CAS.SymbolManagement
     }
     public class NativeFunction : IFunction
     {
-        public static ValueType GetValueType(ExprNode tree)
+        public static ParamType GetValueType(ExprNode tree)
         {
             if (tree is AtomNode)
             {
                 AtomNode atom = (AtomNode)tree;
 
                 if (atom.Type == AtomType.Numeral)
-                    return ValueType.Numeral;
+                    return ParamType.Numeral;
                 else
-                    return ValueType.Variable;
+                    return ParamType.Variable;
             }
             else
-                return ValueType.Expression;
+                return ParamType.Expression;
         }
         public string Name { get; set; }
         public GenericFunction Delegate { get; set; }
-        public ValueType ReturnValue { get; set; }
-        public ValueType[] Parameters { get; set; }
+        public ParamType ReturnValue { get; set; }
+        public ParamType[] Parameters { get; set; }
 
         public bool CheckParameterTypes(object[] parameters)
         {
@@ -42,10 +42,10 @@ namespace CAS.SymbolManagement
                 if (!(parameters[i] is ExprNode))
                     return false;
 
-                ValueType type = GetValueType((ExprNode)parameters[i]);
+                ParamType type = GetValueType((ExprNode)parameters[i]);
 
                 // Variable or Numeral may act as an Expression
-                if (Parameters[i] == ValueType.Expression && (type == ValueType.Variable || type == ValueType.Numeral))
+                if (Parameters[i] == ParamType.Expression && (type == ParamType.Variable || type == ParamType.Numeral))
                     continue;
                 else if (Parameters[i] == type)
                     continue;
@@ -76,10 +76,10 @@ namespace CAS.SymbolManagement
         private static object RunOneParamMathFunction(string name, Func<double, double> func, object[] parameters)
         {
             var param0 = (ExprNode)parameters[0];
-            ValueType type = NativeFunction.GetValueType((ExprNode)param0);
+            ParamType type = NativeFunction.GetValueType((ExprNode)param0);
 
 
-            if (type == ValueType.Numeral)
+            if (type == ParamType.Numeral)
             {
                 var a = (double)((AtomNode)param0).Data;
                 return new AtomNode
@@ -98,11 +98,11 @@ namespace CAS.SymbolManagement
         {
             var param0 = (ExprNode)parameters[0];
             var param1 = (ExprNode)parameters[1];
-            ValueType type0 = NativeFunction.GetValueType((ExprNode)param0);
-            ValueType type1 = NativeFunction.GetValueType((ExprNode)param1);
+            ParamType type0 = NativeFunction.GetValueType((ExprNode)param0);
+            ParamType type1 = NativeFunction.GetValueType((ExprNode)param1);
 
 
-            if ((type0 == ValueType.Numeral) && (type1 == ValueType.Numeral))
+            if ((type0 == ParamType.Numeral) && (type1 == ParamType.Numeral))
             {
                 var a = (double)((AtomNode)param0).Data;
                 var b = (double)((AtomNode)param1).Data;
@@ -223,136 +223,136 @@ namespace CAS.SymbolManagement
             {
                 Name = "sin",
                 Delegate = Sin,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["cos"] = new NativeFunction
             {
                 Name = "cos",
                 Delegate = Cos,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["tan"] = new NativeFunction
             {
                 Name = "tan",
                 Delegate = Tan,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["asin"] = new NativeFunction
             {
                 Name = "asin",
                 Delegate = Asin,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["acos"] = new NativeFunction
             {
                 Name = "acos",
                 Delegate = Acos,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["atan"] = new NativeFunction
             {
                 Name = "atan",
                 Delegate = Atan,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["sinh"] = new NativeFunction
             {
                 Name = "sinh",
                 Delegate = Sinh,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["cosh"] = new NativeFunction
             {
                 Name = "cosh",
                 Delegate = Cosh,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["tanh"] = new NativeFunction
             {
                 Name = "tanh",
                 Delegate = Tanh,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["asinh"] = new NativeFunction
             {
                 Name = "asinh",
                 Delegate = Asinh,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["acosh"] = new NativeFunction
             {
                 Name = "acosh",
                 Delegate = Acosh,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["atanh"] = new NativeFunction
             {
                 Name = "atanh",
                 Delegate = Atanh,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["pow"] = new NativeFunction
             {
                 Name = "pow",
                 Delegate = Pow,
-                Parameters = new ValueType[] { ValueType.Expression, ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression, ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["exp"] = new NativeFunction
             {
                 Name = "exp",
                 Delegate = Exp,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["log"] = new NativeFunction
             {
                 Name = "log",
                 Delegate = Log,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["ln"] = new NativeFunction
             {
                 Name = "ln",
                 Delegate = Log,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
             functions["sqrt"] = new NativeFunction
             {
                 Name = "sqrt",
                 Delegate = Sqrt,
-                Parameters = new ValueType[] { ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
 
             functions["exit"] = new NativeFunction
             {
                 Name = "exit",
                 Delegate = Exit,
-                Parameters = new ValueType[] { },
-                ReturnValue = ValueType.None
+                Parameters = new ParamType[] { },
+                ReturnValue = ParamType.None
             };
 
             functions["subst"] = new NativeFunction
             {
                 Name = "subst",
                 Delegate = Subst,
-                Parameters = new ValueType[] { ValueType.Expression, ValueType.Variable, ValueType.Expression },
-                ReturnValue = ValueType.Expression
+                Parameters = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Expression },
+                ReturnValue = ParamType.Expression
             };
         }
     }
