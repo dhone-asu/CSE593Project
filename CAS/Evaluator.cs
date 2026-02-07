@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -209,6 +210,11 @@ namespace CAS
             return true;
         }
 
+        public static ExprNode Evaluate(ExprNode expression)
+        {
+            var evaluator = new Evaluator(expression);
+            return evaluator.Evaluate();
+        }
 
         public ExprNode Evaluate()
         {
@@ -242,10 +248,10 @@ namespace CAS
             {
                 FunctionNode functionNode = (FunctionNode)expression;
 
-                for (int i = 0; i < functionNode.Params.Count; i++)
+                /*for (int i = 0; i < functionNode.Params.Count; i++)
                 {
                     functionNode.Params[i] = Substitute(functionNode.Params[i], symbol, value);
-                }
+                }*/
 
                 return functionNode;
             }
@@ -351,10 +357,6 @@ namespace CAS
             {
                 FunctionNode functionNode = (FunctionNode)node;
                 object[] parameters = functionNode.Params.ToArray();
-                for (int i = 0; i < parameters.Count(); i++)
-                {
-                    parameters[i] = EvaluateNode((ExprNode)parameters[i]);
-                }
 
                 IFunction function = GetFunction(functionNode.Name);
 
@@ -365,11 +367,13 @@ namespace CAS
                     return (ExprNode)result;
                 }
                 else
+                {
                     return new FunctionNode
                     {
                         Name = functionNode.Name,
                         Params = new List<ExprNode>((ExprNode[])parameters)
                     };
+                }
             }
             else
                 throw new Exception($"Node type '{node.GetType()}' not supported for evaluation");
