@@ -206,6 +206,7 @@ namespace CAS
         public static ExprNode Substitute(ExprNode expression, params object[] args)
         {
             if (expression == null) return null;
+            expression = (ExprNode)expression.Clone();
             var varNames = new List<string>();
             var substitutions = new List<ExprNode>();
 
