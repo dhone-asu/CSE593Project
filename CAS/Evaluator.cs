@@ -208,7 +208,7 @@ namespace CAS
 
                 for (int i = 0; i < functionNode.Params.Count; i++)
                 {
-                    if (function.Parameters[i] == SymbolManagement.ParamType.Expression)
+                    if (function.Parameters[i] == ParamType.Expression)
                         functionNode.Params[i] = Substitute(functionNode.Params[i], symbol, value);
                 }
                 //var function = SessionManager.Default.
@@ -322,7 +322,7 @@ namespace CAS
                 
                 for (int i  = 0; i < parameters.Length; i++)
                 {
-                    if (function.Parameters[i] == SymbolManagement.ParamType.Expression)
+                    if (function.Parameters[i] == ParamType.Expression)
                         parameters[i] = Evaluate((ExprNode)parameters[i]);                            
                 }
 
