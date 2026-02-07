@@ -75,7 +75,7 @@ namespace CAS.SymbolManagement
 
         private static object RunOneParamMathFunction(string name, Func<double, double> func, object[] parameters)
         {
-            var param0 = Evaluator.Evaluate((ExprNode)parameters[0]);
+            var param0 = (ExprNode)parameters[0];
             ValueType type = NativeFunction.GetValueType((ExprNode)param0);
 
 
@@ -96,8 +96,8 @@ namespace CAS.SymbolManagement
 
         private static object RunTwoParamMathFunction(string name, Func<double, double, double> func, object[] parameters)
         {
-            var param0 = Evaluator.Evaluate((ExprNode)parameters[0]);
-            var param1 = Evaluator.Evaluate((ExprNode)parameters[1]);
+            var param0 = (ExprNode)parameters[0];
+            var param1 = (ExprNode)parameters[1];
             ValueType type0 = NativeFunction.GetValueType((ExprNode)param0);
             ValueType type1 = NativeFunction.GetValueType((ExprNode)param1);
 

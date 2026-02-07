@@ -152,50 +152,7 @@ namespace CAS
             }
         }
 
-        private IVariable GetVariable(string name)
-        {
-            if (SessionManager.Default.ConstantManager.VariableExists(name))
-            {
-                return SessionManager.Default.ConstantManager.GetVariable(name);
-            }
-            else if (SessionManager.Default.UserVariableManager.VariableExists(name))
-            {
-                return SessionManager.Default.UserVariableManager.GetVariable(name);
-            }
-            else
-                return null;
-        }
 
-        private void SetVariable(string name, ExprNode value)
-        {
-
-            if (SessionManager.Default.ConstantManager.VariableExists(name))
-                throw new EvaluatorException($"Cannot set variable '{name}' because it refers to a constant");
-
-            var variable = new UserVariable
-            {
-                Name = name,
-                Value = value
-            };
-
-            SessionManager.Default.UserVariableManager.SetVariable(name, variable);
-        }
-
-        private IFunction GetFunction(string name)
-        {
-            if (SessionManager.Default.NativeFunctionManager.FunctionExists(name))
-            {
-                return SessionManager.Default.NativeFunctionManager.GetFunction(name);
-            }
-            else
-                return null;
-        }
-
-        private void SetFunction(string name, IFunction function)
-        {
-            if (SessionManager.Default.NativeFunctionManager.FunctionExists(name))
-                throw new EvaluatorException($"Cannot set function '{name}' because it refers to a native function.");
-        }
 
         private bool ParametersAreIdentifiers(FunctionNode node)
         {
@@ -247,11 +204,14 @@ namespace CAS
             else if (expression is FunctionNode)
             {
                 FunctionNode functionNode = (FunctionNode)expression;
+                var function = SessionManager.Default.GetFunction(functionNode.Name);
 
-                /*for (int i = 0; i < functionNode.Params.Count; i++)
+                for (int i = 0; i < functionNode.Params.Count; i++)
                 {
-                    functionNode.Params[i] = Substitute(functionNode.Params[i], symbol, value);
-                }*/
+                    if (function.Parameters[i] == SymbolManagement.ValueType.Expression)
+                        functionNode.Params[i] = Substitute(functionNode.Params[i], symbol, value);
+                }
+                //var function = SessionManager.Default.
 
                 return functionNode;
             }
@@ -274,13 +234,13 @@ namespace CAS
         {
             if (left is AtomNode && ((AtomNode)left).Type == AtomType.Identifier)
             {
-                SetVariable((string)((AtomNode)left).Data, right);
+                SessionManager.Default.SetVariable((string)((AtomNode)left).Data, right);
             }
             else if (left is FunctionNode && ParametersAreIdentifiers((FunctionNode)left))
             {
                 UserFunction userFunction = new UserFunction();
                 userFunction.Expression = right;
-                SetFunction((string)((FunctionNode)left).Name, userFunction);
+                SessionManager.Default.SetFunction((string)((FunctionNode)left).Name, userFunction);
             }
             else
                 throw new EvaluatorException("Left-hand side must be variable or function identifier");
@@ -341,7 +301,7 @@ namespace CAS
 
                 if (atomNode.Type == AtomType.Identifier)
                 {
-                    var variable = GetVariable((string)atomNode.Data);
+                    var variable = SessionManager.Default.GetVariable((string)atomNode.Data);
 
                     if (variable != null)
                     {
@@ -358,7 +318,13 @@ namespace CAS
                 FunctionNode functionNode = (FunctionNode)node;
                 object[] parameters = functionNode.Params.ToArray();
 
-                IFunction function = GetFunction(functionNode.Name);
+                IFunction function = SessionManager.Default.GetFunction(functionNode.Name);
+
+                for (int i  = 0; i < parameters.Length; i++)
+                {
+                    if (function.Parameters[i] == SymbolManagement.ValueType.Expression)
+                        parameters[i] = Evaluate((ExprNode)parameters[i]);                            
+                }
 
                 if (function != null)
                 {
