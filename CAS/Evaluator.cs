@@ -38,7 +38,6 @@ namespace CAS
         };
 
         ExprNode tree;
-        public SessionManager SessionManager { get; set; }
         public Evaluator(ExprNode expression) 
         {
             tree = expression;
@@ -154,16 +153,13 @@ namespace CAS
 
         private IVariable GetVariable(string name)
         {
-            if (SessionManager == null)
-                return null;
-
-            if (SessionManager.ConstantManager.VariableExists(name))
+            if (SessionManager.Default.ConstantManager.VariableExists(name))
             {
-                return SessionManager.ConstantManager.GetVariable(name);
+                return SessionManager.Default.ConstantManager.GetVariable(name);
             }
-            else if (SessionManager.UserVariableManager.VariableExists(name))
+            else if (SessionManager.Default.UserVariableManager.VariableExists(name))
             {
-                return SessionManager.UserVariableManager.GetVariable(name);
+                return SessionManager.Default.UserVariableManager.GetVariable(name);
             }
             else
                 return null;
@@ -171,10 +167,8 @@ namespace CAS
 
         private void SetVariable(string name, ExprNode value)
         {
-            if (SessionManager == null)
-                return;
 
-            if (SessionManager.ConstantManager.VariableExists(name))
+            if (SessionManager.Default.ConstantManager.VariableExists(name))
                 throw new EvaluatorException($"Cannot set variable '{name}' because it refers to a constant");
 
             var variable = new UserVariable
@@ -183,17 +177,14 @@ namespace CAS
                 Value = value
             };
 
-            SessionManager.UserVariableManager.SetVariable(name, variable);
+            SessionManager.Default.UserVariableManager.SetVariable(name, variable);
         }
 
         private IFunction GetFunction(string name)
         {
-            if (SessionManager == null)
-                return null;
-
-            if (SessionManager.NativeFunctionManager.FunctionExists(name))
+            if (SessionManager.Default.NativeFunctionManager.FunctionExists(name))
             {
-                return SessionManager.NativeFunctionManager.GetFunction(name);
+                return SessionManager.Default.NativeFunctionManager.GetFunction(name);
             }
             else
                 return null;
@@ -201,12 +192,8 @@ namespace CAS
 
         private void SetFunction(string name, IFunction function)
         {
-            if (SessionManager == null)
-                return;
-
-            if (SessionManager.NativeFunctionManager.FunctionExists(name))
+            if (SessionManager.Default.NativeFunctionManager.FunctionExists(name))
                 throw new EvaluatorException($"Cannot set function '{name}' because it refers to a native function.");
-
         }
 
         private bool ParametersAreIdentifiers(FunctionNode node)

@@ -12,7 +12,6 @@ namespace CAS
     {
         static void Main(string[] args)
         {
-            SessionManager sessionManager = new SessionManager();
             string last = "";
             while (true)
             {
@@ -23,9 +22,9 @@ namespace CAS
                     line = last;
                 }
                 last = line;
-                Evaluator evaluator = new Evaluator(line) { SessionManager = sessionManager };
+                Evaluator evaluator = new Evaluator(line);
                 var result = evaluator.Evaluate();
-                sessionManager.UserVariableManager.SetVariable("ans", new UserVariable
+                SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
                     Value = result
@@ -36,9 +35,6 @@ namespace CAS
                     Console.WriteLine(Evaluator.PrintExpression(result));
                 Console.WriteLine();
             }
-
-
-            return;
         }
         //public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
 

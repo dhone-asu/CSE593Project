@@ -202,7 +202,7 @@ namespace CAS.SymbolManagement
 
             var result = Evaluator.Substitute(expression, symbol, value);
 
-            var evaluator = new Evaluator(result) { SessionManager = SessionManager.Default };
+            var evaluator = new Evaluator(result);
             return evaluator.Evaluate();
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CAS;
 
 namespace CAS.SymbolManagement
 {
@@ -35,7 +36,6 @@ namespace CAS.SymbolManagement
     {
         public Dictionary<string, UserFunction> UserFunctions { get; set; } = new Dictionary<string, UserFunction>();
 
-        public SessionManager SessionManager { get; set; }
         public IFunction GetFunction(string name)
         {
             return UserFunctions[name];
