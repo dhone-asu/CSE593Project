@@ -201,13 +201,9 @@ namespace CAS.SymbolManagement
             ExprNode value = (ExprNode)parameters[2];
 
             var result = Evaluator.Substitute(expression, symbol, value);
-            if (SessionManager != null)
-            {
-                var evaluator = new Evaluator(result) { SessionManager = SessionManager };
-                return evaluator.Evaluate();
-            }
-            else
-                return result;
+
+            var evaluator = new Evaluator(result) { SessionManager = SessionManager.Default };
+            return evaluator.Evaluate();
         }
 
         public bool FunctionExists(string name)

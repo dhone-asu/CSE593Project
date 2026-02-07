@@ -9,6 +9,7 @@ namespace CAS
 {
     public class SessionManager
     {
+        public static SessionManager Default { get; private set; } = new SessionManager();
         ConstantManager constantManager = new ConstantManager();
         UserVariableManager userVariableManager = new UserVariableManager();
         NativeFunctionManager nativeFunctionManager = new NativeFunctionManager();
