@@ -30,9 +30,26 @@ namespace CAS.SymbolManagement
             return true;
         }
 
+        private object[] GetSubstitutionArray(object[] parameters)
+        {
+            var args = new List<object>();
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                args.Add(ParameterNames[i]);
+                args.Add(parameters[i]);
+            }
+
+            return args.ToArray();
+        }
+
         public object Call(object[] parameters)
         {
-            return null; 
+            var args = GetSubstitutionArray(parameters);
+
+            var afterSubst = Evaluator.Substitute(Expression, args);
+            var afterEval = Evaluator.Evaluate(afterSubst);
+            return afterEval;
         }
     }
     public class UserFunctionManager: IFunctionManager

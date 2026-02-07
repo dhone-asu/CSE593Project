@@ -160,11 +160,26 @@ namespace CAS
 
             foreach (var item in node.Params)
             {
-                if (!(item is AtomNode && ((AtomNode)item).Type != AtomType.Identifier))
+                if (!(item is AtomNode && ((AtomNode)item).Type == AtomType.Identifier))
                     return false;
             }
 
             return true;
+        }
+
+        private string[] GetParamNames(FunctionNode node)
+        {
+            var list = new List<string>();
+
+            foreach (var item in node.Params)
+            {
+                if (!(item is AtomNode && ((AtomNode)item).Type == AtomType.Identifier))
+                    throw new EvaluateException("Parameters must be identifier to create user function");
+                var atomNode = (AtomNode)item;
+                list.Add((string)atomNode.Data);
+            }
+
+            return list.ToArray();
         }
 
         public static ExprNode Evaluate(ExprNode expression)
@@ -258,6 +273,10 @@ namespace CAS
             {
                 UserFunction userFunction = new UserFunction();
                 userFunction.Expression = right;
+                userFunction.ParameterNames = GetParamNames((FunctionNode)left);
+                var parameters = from name in userFunction.ParameterNames select ParamType.Expression;
+                userFunction.Parameters = parameters.ToArray();
+                userFunction.ReturnValue = ParamType.Expression;
                 SessionManager.Default.SetFunction((string)((FunctionNode)left).Name, userFunction);
             }
             else
