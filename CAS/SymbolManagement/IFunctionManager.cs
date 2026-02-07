@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CAS.SymbolManagement
 {
     public delegate object GenericFunction(object[] parameters);
-    public enum ParamType { None, Numeral, Variable, Expression };
+    public enum ParamType { None, Numeral, Variable, Expression, Args };
 
     public interface IFunction
     {

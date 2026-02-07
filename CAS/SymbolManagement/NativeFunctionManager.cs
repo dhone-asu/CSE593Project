@@ -34,11 +34,18 @@ namespace CAS.SymbolManagement
 
         public bool CheckParameterTypes(object[] parameters)
         {
-            if (Parameters.Length != parameters.Length)
+            if (Parameters[Parameters.Length - 1] == ParamType.Args)
+            {
+                if (parameters.Length < Parameters.Length - 1)
+                    return false;
+            }
+            else if (Parameters.Length != parameters.Length)
                 return false;
 
             for (int i = 0; i < parameters.Length; i++)
             {
+                if (Parameters[i] == ParamType.Args)
+                    break;
                 if (!(parameters[i] is ExprNode))
                     return false;
 
@@ -194,13 +201,20 @@ namespace CAS.SymbolManagement
             return null;
         }
 
-        public object Subst(object[] parameters)
+        public static object Subst(object[] parameters)
         {
             ExprNode expression = (ExprNode)parameters[0];
-            string symbol = (string)((AtomNode)parameters[1]).Data;
-            ExprNode value = (ExprNode)parameters[2];
+            var substParams = new List<object>();
 
-            var result = Evaluator.Substitute(expression, symbol, value);
+            for (int i = 1; i < parameters.Length; i += 2)
+            {
+                var symbol = (AtomNode)parameters[i];
+                var value = (ExprNode)parameters[i + 1];
+                substParams.Add(symbol.Data);
+                substParams.Add(value);
+            }
+
+            var result = Evaluator.Substitute(expression, substParams.ToArray());
 
             var evaluator = new Evaluator(result);
             return evaluator.Evaluate();
@@ -351,7 +365,7 @@ namespace CAS.SymbolManagement
             {
                 Name = "subst",
                 Delegate = Subst,
-                Parameters = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Expression },
+                Parameters = new ParamType[] { ParamType.Expression, ParamType.Args },
                 ReturnValue = ParamType.Expression
             };
         }

@@ -188,16 +188,29 @@ namespace CAS
             }
         }
 
-        public static ExprNode Substitute(ExprNode expression, string symbol, ExprNode value)
+        public static ExprNode Substitute(ExprNode expression, params object[] args)
         {
             if (expression == null) return null;
+            var varNames = new List<string>();
+            var substitutions = new List<ExprNode>();
+
+            if (args.Length % 2 != 0)
+                throw new EvaluateException("Parameters must be paired");
+
+            for (int i = 0; i < args.Length; i += 2)
+            {
+                if (!(args[i] is string && args[i + 1] is ExprNode))
+                    throw new EvaluateException("Parameters must be alternating string and ExprNode");
+                varNames.Add((string)args[i]);
+                substitutions.Add((ExprNode)args[i + 1]);
+            }
 
             if (expression is OpNode)
             {
                 OpNode opNode = (OpNode)expression;
 
-                opNode.Left = Substitute(opNode.Left, symbol, value);
-                opNode.Right = Substitute(opNode.Right, symbol, value);
+                opNode.Left = Substitute(opNode.Left, args);
+                opNode.Right = Substitute(opNode.Right, args);
 
                 return opNode;
             }
@@ -208,8 +221,10 @@ namespace CAS
 
                 for (int i = 0; i < functionNode.Params.Count; i++)
                 {
+                    if (function.Parameters[i] == ParamType.Args)
+                        break;
                     if (function.Parameters[i] == ParamType.Expression)
-                        functionNode.Params[i] = Substitute(functionNode.Params[i], symbol, value);
+                        functionNode.Params[i] = Substitute(functionNode.Params[i], args);
                 }
                 //var function = SessionManager.Default.
 
@@ -219,9 +234,10 @@ namespace CAS
             {
                 AtomNode atomNode = (AtomNode)expression;
 
-                if ((atomNode.Type == AtomType.Identifier) && ((string)atomNode.Data == symbol))
+                if ((atomNode.Type == AtomType.Identifier) && (varNames.Contains((string)atomNode.Data)))
                 {
-                    return value;
+                    int i = varNames.IndexOf((string)atomNode.Data);
+                    return substitutions[i];
                 }
                 else
                     return expression;
@@ -229,6 +245,8 @@ namespace CAS
             else
                 throw new EvaluatorException("Unknown expression node type");
         }
+
+
 
         public void Assign(ExprNode left,  ExprNode right)
         {
@@ -322,6 +340,8 @@ namespace CAS
                 
                 for (int i  = 0; i < parameters.Length; i++)
                 {
+                    if (function.Parameters[i] == ParamType.Args)
+                        break;
                     if (function.Parameters[i] == ParamType.Expression)
                         parameters[i] = Evaluate((ExprNode)parameters[i]);                            
                 }

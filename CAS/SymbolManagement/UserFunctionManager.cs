@@ -14,8 +14,6 @@ namespace CAS.SymbolManagement
             return null;
         }
         public string Name { get; set; }
-        public GenericFunction Delegate { get; set; }
-
         public ExprNode Expression { get; set; }
 
         public string[] ParameterNames { get; set; }
@@ -24,7 +22,12 @@ namespace CAS.SymbolManagement
 
         public bool CheckParameterTypes(object[] parameters)
         {
-            return false;
+            foreach (var parameter in parameters)
+            {
+                if (!(parameter is ExprNode))
+                    return false;
+            }
+            return true;
         }
 
         public object Call(object[] parameters)
