@@ -14,7 +14,6 @@ namespace CAS.SymbolManagement
     public interface IFunction
     {
         string Name { get; set; }
-        GenericFunction Delegate { get; set; }
         ParamType ReturnValue { get; set; }
         ParamType[] Parameters {  get; set; }
         bool CheckParameterTypes(object[] parameters);
