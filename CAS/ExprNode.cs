@@ -25,8 +25,8 @@ namespace CAS
             return new OpNode
             {
                 Operator = Operator,
-                Left = (ExprNode)Left.Clone(),
-                Right = (ExprNode)Right.Clone(),
+                Left = (ExprNode)Left?.Clone(),
+                Right = (ExprNode)Right?.Clone(),
             };
         }
     }

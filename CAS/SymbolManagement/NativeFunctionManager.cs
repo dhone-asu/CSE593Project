@@ -206,6 +206,24 @@ namespace CAS.SymbolManagement
             return null;
         }
 
+        public static object Integrate(object[] parameters)
+        {
+            var expr = (ExprNode)parameters[0];
+            var variable = (AtomNode)parameters[1];
+            var a = (AtomNode)parameters[2];
+            var b = (AtomNode)parameters[3];
+            var function = new UserFunction
+            {
+                Expression = expr,
+                Name = "anon",
+                ParameterNames = new[] { (string)variable.Data },
+                ParameterTypes = new[] { ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+
+            var result = ExtendedMath.Integrate(function, a, b);
+            return result;
+        }
         public static object Subst(object[] parameters)
         {
             ExprNode expression = (ExprNode)parameters[0];
@@ -380,6 +398,14 @@ namespace CAS.SymbolManagement
                 Delegate = Subst,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Args },
                 ReturnType = ParamType.Expression
+            };
+
+            functions["integrate"] = new NativeFunction
+            {
+                Name = "integrate",
+                Delegate = Integrate,
+                ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral, ParamType.Numeral },
+                ReturnType = ParamType.Numeral
             };
         }
     }
