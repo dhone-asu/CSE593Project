@@ -74,8 +74,8 @@ namespace CAS
                 throw new Exception("Limits must be numeric");
             double lowerLim = (double)a.Data;
             double upperLim = (double)b.Data;
-            double n = 1e8;
-            double delta = (lowerLim - upperLim)/n;
+            double n = 1e7;
+            double delta = (upperLim - lowerLim)/n;
             double result = 0;
 
             for (double x = lowerLim; x <= upperLim; x += delta)
