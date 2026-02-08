@@ -195,6 +195,11 @@ namespace CAS.SymbolManagement
         {
             return RunOneParamMathFunction("sqrt", Math.Sqrt, parameters);
         }
+
+        public static object Fact(object[] parameters)
+        {
+            return RunOneParamMathFunction("fact", ExtendedMath.Fact, parameters);
+        }
         public static object Exit(object[] parameters)
         {
             Environment.Exit(0);
@@ -349,6 +354,14 @@ namespace CAS.SymbolManagement
             {
                 Name = "sqrt",
                 Delegate = Sqrt,
+                ParameterTypes = new ParamType[] { ParamType.Expression },
+                ReturnType = ParamType.Expression
+            };
+
+            functions["fact"] = new NativeFunction
+            {
+                Name = "fact",
+                Delegate = Fact,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
                 ReturnType = ParamType.Expression
             };
