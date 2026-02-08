@@ -172,10 +172,6 @@ namespace CAS
                 buffer.GetChar();
                 str = str + c;
             }
-            else
-            {
-                return new Token { String = str, Type = TokenType.Numeral };
-            }
 
             c = buffer.PeekChar();
 
@@ -185,6 +181,9 @@ namespace CAS
                 str = str + c;
                 c = buffer.PeekChar();
             }
+
+            if (str == ".")
+                throw new ParserException($"'{str}' is not a valid numeral");
 
             c = buffer.PeekChar();
             
