@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SessionManager.cs" />
+    <Compile Include="Simplifier.cs" />
     <Compile Include="SymbolManagement\ConstantManager.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="ExprNode.cs" />
