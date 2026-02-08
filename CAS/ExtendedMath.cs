@@ -68,6 +68,14 @@ namespace CAS
             return result;
         }
 
+        public static double Differentiate(Func<double, double> function, double a)
+        {
+            double delta = 1e-8;
+
+            return (function(a + delta) - function(a - delta)) / (2 * delta);
+        }
+
+
         public static ExprNode Integrate(IFunction function, AtomNode a, AtomNode b)
         {
             if (a.Type != AtomType.Numeral || b.Type != AtomType.Numeral)
@@ -94,6 +102,20 @@ namespace CAS
                 Type = AtomType.Numeral,
                 Data = result
             };
+        }
+
+        public static ExprNode Differentiate(IFunction function, AtomNode a)
+        {
+            if (a.Type != AtomType.Numeral)
+                throw new Exception("Point must be numeric");
+            double delta = 1e-8;
+            AtomNode plusdelta = new AtomNode { Data = (double)a.Data + delta, Type = AtomType.Numeral };
+            AtomNode minusdelta = new AtomNode { Data = (double)a.Data - delta, Type = AtomType.Numeral };
+
+            AtomNode f1 = (AtomNode)function.Call(new[] { plusdelta });
+            AtomNode f2 = (AtomNode)function.Call(new[] { minusdelta });
+            double result = ((double)f1.Data - (double)f2.Data) / (2 * delta);
+            return new AtomNode { Data = result, Type = AtomType.Numeral };
         }
 
         private static double LogGammaBaseFormula(double x)

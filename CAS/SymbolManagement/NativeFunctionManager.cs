@@ -224,6 +224,25 @@ namespace CAS.SymbolManagement
             var result = ExtendedMath.Integrate(function, a, b);
             return result;
         }
+
+        public static object Differentiate(object[] parameters)
+        {
+            var expr = (ExprNode)parameters[0];
+            var variable = (AtomNode)parameters[1];
+            var point = (AtomNode)parameters[2];
+
+            var function = new UserFunction
+            {
+                Expression = expr,
+                Name = "anon",
+                ParameterNames = new[] { (string)variable.Data },
+                ParameterTypes = new[] { ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+
+            var result = ExtendedMath.Differentiate(function, point);
+            return result;
+        }
         public static object Subst(object[] parameters)
         {
             ExprNode expression = (ExprNode)parameters[0];
@@ -400,11 +419,18 @@ namespace CAS.SymbolManagement
                 ReturnType = ParamType.Expression
             };
 
-            functions["integrate"] = new NativeFunction
+            functions["integ"] = new NativeFunction
             {
-                Name = "integrate",
+                Name = "integ",
                 Delegate = Integrate,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral, ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+            functions["diff"] = new NativeFunction
+            {
+                Name = "diff",
+                Delegate = Differentiate,
+                ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral },
                 ReturnType = ParamType.Numeral
             };
         }
