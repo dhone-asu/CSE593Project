@@ -237,9 +237,9 @@ namespace CAS
 
                 for (int i = 0; i < functionNode.Params.Count; i++)
                 {
-                    if (function.Parameters[i] == ParamType.Args)
+                    if (function.ParameterTypes[i] == ParamType.Args)
                         break;
-                    if (function.Parameters[i] == ParamType.Expression)
+                    if (function.ParameterTypes[i] == ParamType.Expression)
                         functionNode.Params[i] = Substitute(functionNode.Params[i], args);
                 }
                 //var function = SessionManager.Default.
@@ -276,8 +276,8 @@ namespace CAS
                 userFunction.Expression = right;
                 userFunction.ParameterNames = GetParamNames((FunctionNode)left);
                 var parameters = from name in userFunction.ParameterNames select ParamType.Expression;
-                userFunction.Parameters = parameters.ToArray();
-                userFunction.ReturnValue = ParamType.Expression;
+                userFunction.ParameterTypes = parameters.ToArray();
+                userFunction.ReturnType = ParamType.Expression;
                 SessionManager.Default.SetFunction((string)((FunctionNode)left).Name, userFunction);
             }
             else
@@ -360,9 +360,9 @@ namespace CAS
                 
                 for (int i  = 0; i < parameters.Length; i++)
                 {
-                    if (function.Parameters[i] == ParamType.Args)
+                    if (function.ParameterTypes[i] == ParamType.Args)
                         break;
-                    if (function.Parameters[i] == ParamType.Expression)
+                    if (function.ParameterTypes[i] == ParamType.Expression)
                         parameters[i] = Evaluate((ExprNode)parameters[i]);                            
                 }
 
