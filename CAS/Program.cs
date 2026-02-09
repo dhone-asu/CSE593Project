@@ -24,6 +24,7 @@ namespace CAS
                 last = line;
                 Evaluator evaluator = new Evaluator(line);
                 var result = evaluator.Evaluate();
+                var flattened = Simplifier.Flatten(result,3);
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
