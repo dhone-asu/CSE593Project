@@ -233,16 +233,20 @@ namespace CAS
             else if (expression is FunctionNode)
             {
                 FunctionNode functionNode = (FunctionNode)expression;
-                var function = SessionManager.Default.GetFunction(functionNode.Name);
 
-                for (int i = 0; i < functionNode.Params.Count; i++)
+                if (SessionManager.Default.FunctionExists(functionNode.Name))
                 {
-                    if (function.ParameterTypes[i] == ParamType.Args)
-                        break;
-                    if (function.ParameterTypes[i] == ParamType.Expression)
-                        functionNode.Params[i] = Substitute(functionNode.Params[i], args);
+                    var function = SessionManager.Default.GetFunction(functionNode.Name);
+
+                    for (int i = 0; i < functionNode.Params.Count; i++)
+                    {
+                        if (function.ParameterTypes[i] == ParamType.Args)
+                            break;
+                        if (function.ParameterTypes[i] == ParamType.Expression)
+                            functionNode.Params[i] = Substitute(functionNode.Params[i], args);
+                    }
+                    //var function = SessionManager.Default.
                 }
-                //var function = SessionManager.Default.
 
                 return functionNode;
             }
@@ -356,18 +360,18 @@ namespace CAS
                 FunctionNode functionNode = (FunctionNode)node;
                 object[] parameters = functionNode.Params.ToArray();
 
-                IFunction function = SessionManager.Default.GetFunction(functionNode.Name);
-                
-                for (int i  = 0; i < parameters.Length; i++)
+                if (SessionManager.Default.FunctionExists(functionNode.Name))
                 {
-                    if (function.ParameterTypes[i] == ParamType.Args)
-                        break;
-                    if (function.ParameterTypes[i] == ParamType.Expression)
-                        parameters[i] = Evaluate((ExprNode)parameters[i]);                            
-                }
+                    IFunction function = SessionManager.Default.GetFunction(functionNode.Name);
 
-                if (function != null)
-                {
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        if (function.ParameterTypes[i] == ParamType.Args)
+                            break;
+                        if (function.ParameterTypes[i] == ParamType.Expression)
+                            parameters[i] = Evaluate((ExprNode)parameters[i]);
+                    }
+
                     object result = function.Call(parameters);
 
                     return (ExprNode)result;

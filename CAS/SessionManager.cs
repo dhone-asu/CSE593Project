@@ -49,6 +49,11 @@ namespace CAS
             UserVariableManager.SetVariable(name, variable);
         }
 
+        public bool VariableExists(string name)
+        {
+            return ConstantManager.VariableExists(name) || UserVariableManager.VariableExists(name);
+        }
+
         public IFunction GetFunction(string name)
         {
             if (SessionManager.Default.NativeFunctionManager.FunctionExists(name))
@@ -68,6 +73,11 @@ namespace CAS
             if (!(function is UserFunction))
                 throw new EvaluatorException($"Only UserFunction can be set");
             UserFunctionManager.SetFunction(name, (UserFunction)function);
+        }
+
+        public bool FunctionExists(string name)
+        {
+            return NativeFunctionManager.FunctionExists(name) || UserFunctionManager.FunctionExists(name);
         }
     }
 }
