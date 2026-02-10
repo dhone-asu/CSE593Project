@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CAS
 {
     public enum ParserContext { General, Params }
-    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Mod, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
+    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
 
     public class Parser
     {
@@ -16,7 +16,6 @@ namespace CAS
             { Operator.Neg, 5 },
             { Operator.Mult, 4 },
             { Operator.Div, 4 },
-            { Operator.Mod, 4 },
             { Operator.Plus, 3 },
             { Operator.Minus, 3 },
             { Operator.Eq, 2 },
@@ -35,7 +34,6 @@ namespace CAS
             {TokenType.Div, Operator.Div},
             {TokenType.Mult, Operator.Mult},
             {TokenType.Pow, Operator.Pow},
-            {TokenType.Mod, Operator.Mod},
             {TokenType.Eq, Operator.Eq},
             {TokenType.Gt, Operator.Gt},
             {TokenType.Lt, Operator.Lt},
@@ -139,8 +137,6 @@ namespace CAS
                 op = Expect(TokenType.Mult);
             else if (t.Type == TokenType.Pow)
                 op = Expect(TokenType.Pow);
-            else if (t.Type == TokenType.Mod)
-                op = Expect(TokenType.Mod);
             else if (t.Type == TokenType.Eq)
                 op = Expect(TokenType.Eq);
             else if (t.Type == TokenType.Neq)

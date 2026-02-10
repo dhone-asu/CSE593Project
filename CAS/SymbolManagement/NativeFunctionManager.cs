@@ -200,6 +200,11 @@ namespace CAS.SymbolManagement
         {
             return RunOneParamMathFunction("fact", ExtendedMath.Fact, parameters);
         }
+
+        public static object Mod(object[] parameters)
+        {
+            return RunTwoParamMathFunction("mod", ExtendedMath.Mod, parameters);
+        }
         public static object Exit(object[] parameters)
         {
             Environment.Exit(0);
@@ -400,6 +405,14 @@ namespace CAS.SymbolManagement
                 Name = "fact",
                 Delegate = Fact,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
+                ReturnType = ParamType.Expression
+            };
+
+            functions["mod"] = new NativeFunction
+            {
+                Name = "mod",
+                Delegate = Mod,
+                ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Expression },
                 ReturnType = ParamType.Expression
             };
 

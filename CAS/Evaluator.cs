@@ -27,7 +27,6 @@ namespace CAS
             { Operator.Div, "/" },
             { Operator.Mult, "*" },
             { Operator.Pow, "^" },
-            { Operator.Mod, "%" },
             { Operator.Eq, "=="  },
             { Operator.Neq, "!=" },
             { Operator.Gt, ">" },
@@ -141,8 +140,6 @@ namespace CAS
                     return a * b;
                 case Operator.Div:
                     return a / b;
-                case Operator.Mod:
-                    return a % b;
                 case Operator.Pow:
                     return Math.Pow(a, b);
                 case Operator.Neg:

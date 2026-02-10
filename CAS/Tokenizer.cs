@@ -89,8 +89,6 @@ namespace CAS
                     }
                 case '^':
                     return new Token { Type = TokenType.Pow };
-                case '%':
-                    return new Token { Type = TokenType.Mod };
                 case '=':
                     if (buffer.PeekChar() == '=')
                     {
@@ -261,7 +259,7 @@ namespace CAS
 
     [Flags]
     public enum TokenType { Numeral, Identifier,
-        Plus, Minus, Div, Mult, Pow, Mod,
+        Plus, Minus, Div, Mult, Pow,
         Eq, Neq, Gt, Lt, Gte, Lte,
         LParen, RParen, Comma,
         Assign,
