@@ -72,7 +72,8 @@ namespace CAS
 
                     leftExpr = PrintExpression(leftNode);
 
-                    if (leftPrec > 0 && leftPrec < treePrec)
+                    if ((leftPrec > 0 && leftPrec < treePrec) ||
+                        (leftPrec == treePrec && opNode.Operator == Operator.Pow))
                         leftExpr = $"({leftExpr})";
                 }
                 else
@@ -82,7 +83,9 @@ namespace CAS
                     rightPrec = Parser.PrecedenceMap[((OpNode)rightNode).Operator];
                     rightExpr = PrintExpression(rightNode);
 
-                    if (rightPrec > 0 && rightPrec < treePrec)
+                    if ((rightPrec > 0 && rightPrec < treePrec) || 
+                        (rightPrec == treePrec && opNode.Operator == Operator.Minus) ||
+                        (rightPrec == treePrec && opNode.Operator == Operator.Div))
                         rightExpr = $"({rightExpr})";
                 }
                 else if (rightNode != null)
