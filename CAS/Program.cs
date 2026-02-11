@@ -22,9 +22,13 @@ namespace CAS
                     line = last;
                 }
                 last = line;
-                Evaluator evaluator = new Evaluator(line);
-                var result = evaluator.Evaluate();
-                var flattened = Simplifier.Flatten(result,3);
+                //Evaluator evaluator = new Evaluator(line);
+                //var result = evaluator.Evaluate();
+                StringBuffer sb = new StringBuffer(line);
+                var tok = new Tokenizer(sb);
+                var parser = new Parser(tok);
+                var result = parser.ParseInput();
+                var flattened = Simplifier.FlattenAddition(result);
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
