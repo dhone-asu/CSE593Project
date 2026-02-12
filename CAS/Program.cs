@@ -28,7 +28,7 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                var flattened = Simplifier.FlattenAddition(result);
+                var flattened = Simplifier.Flatten(result);
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",

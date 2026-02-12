@@ -11,15 +11,16 @@ namespace CAS
 
     public class PolynomialTerm
     {
-        public string Name {  get; set; }
         public double Coeff { get; set; }
-        public double Order { get; set; }
+        public object Base { get; set; }
+        public object Order { get; set; }
     }
 
     public class AdditionTerm
     {
         public ExprNode Expression {  get; set; }
         public bool Negative { get; set; }
+        public List<MultiplicationTerm> MultiplicationTerms { get; set; }
     }
     public class MultiplicationTerm
     {
@@ -80,7 +81,7 @@ namespace CAS
                 };
         }
 
-        public List<MultiplicationTerm> FlattenMultiplication(ExprNode expression)
+        public static List<MultiplicationTerm> FlattenMultiplication(ExprNode expression)
         {
             if (expression == null) return null;
 
@@ -121,6 +122,23 @@ namespace CAS
                 {
                     new MultiplicationTerm { Expression = expression, Reciprocal = false }
                 };
+        }
+
+        public static List<AdditionTerm> Flatten(ExprNode expression)
+        {
+            var flattenAdd = FlattenAddition(expression);
+            
+            foreach (var item in flattenAdd)
+            {
+                item.MultiplicationTerms = FlattenMultiplication(item.Expression);
+            }
+
+            return flattenAdd;
+        }
+
+        public static ExprNode Simplify(ExprNode expression)
+        {
+            return null;
         }
     }
 }
