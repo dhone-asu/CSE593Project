@@ -9,11 +9,16 @@ using System.Threading.Tasks;
 namespace CAS
 {
 
+    public class PolynomialTermComponent
+    {
+        public object Base { get; set; }
+        public object Order { get; set; }
+    }
+
     public class PolynomialTerm
     {
         public double Coeff { get; set; }
-        public object Base { get; set; }
-        public object Order { get; set; }
+        public List<PolynomialTermComponent> Components { get; set; } = new List<PolynomialTermComponent>();
     }
 
     public class AdditionTerm
