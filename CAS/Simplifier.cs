@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,6 +78,49 @@ namespace CAS
                     {
                         new AdditionTerm { Expression = expression, Negative = false },
                     };
+        }
+
+        public List<MultiplicationTerm> FlattenMultiplication(ExprNode expression)
+        {
+            if (expression == null) return null;
+
+            if (expression is AtomNode)
+            {
+                return new List<MultiplicationTerm>()
+                {
+                    new MultiplicationTerm { Expression = expression, Reciprocal = false }
+                };
+            }
+            else if (expression is OpNode)
+            {
+                var opNode = (OpNode)expression;
+
+                if (opNode.Operator == Operator.Mult || opNode.Operator == Operator.Div)
+                {
+                    var left = FlattenMultiplication(opNode.Left);
+                    var right = FlattenMultiplication(opNode.Right);
+
+                    if (opNode.Operator == Operator.Div)
+                    {
+                        foreach (var item in right)
+                        {
+                            item.Reciprocal = !item.Reciprocal;
+                        }
+                    }
+                    left.AddRange(right);
+                    return left;
+                }
+                else
+                    return new List<MultiplicationTerm>()
+                    {
+                        new MultiplicationTerm { Expression = expression, Reciprocal = false }
+                    };
+            }
+            else
+                return new List<MultiplicationTerm>()
+                {
+                    new MultiplicationTerm { Expression = expression, Reciprocal = false }
+                };
         }
     }
 }
