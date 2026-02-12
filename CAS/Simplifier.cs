@@ -35,9 +35,9 @@ namespace CAS
             if (expression is AtomNode)
             {
                 return new List<AdditionTerm>
-                    {
-                        new AdditionTerm { Expression = expression, Negative = false },
-                    };
+                {
+                    new AdditionTerm { Expression = expression, Negative = false }
+                };
             }
             else if (expression is OpNode)
             {
@@ -70,14 +70,14 @@ namespace CAS
                 else
                     return new List<AdditionTerm>
                     {
-                        new AdditionTerm { Expression = expression , Negative = false},
+                        new AdditionTerm { Expression = expression , Negative = false}
                     };
             }
             else
                 return new List<AdditionTerm>
-                    {
-                        new AdditionTerm { Expression = expression, Negative = false },
-                    };
+                {
+                    new AdditionTerm { Expression = expression, Negative = false }
+                };
         }
 
         public List<MultiplicationTerm> FlattenMultiplication(ExprNode expression)
