@@ -21,6 +21,11 @@ namespace CAS
         public List<PolynomialTermComponent> Components { get; set; } = new List<PolynomialTermComponent>();
     }
 
+    public class Polynomial
+    {
+        public List<PolynomialTerm> Terms { get; set; } = new List<PolynomialTerm>();
+    }
+
     public class AdditionTerm
     {
         public ExprNode Expression {  get; set; }
@@ -35,7 +40,7 @@ namespace CAS
     public class Simplifier
     {
 
-        public static List<AdditionTerm> FlattenAddition(ExprNode expression)
+        private static List<AdditionTerm> FlattenAddition(ExprNode expression)
         {
             if (expression == null) return null;
             if (expression is AtomNode)
@@ -86,7 +91,7 @@ namespace CAS
                 };
         }
 
-        public static List<MultiplicationTerm> FlattenMultiplication(ExprNode expression)
+        private static List<MultiplicationTerm> FlattenMultiplication(ExprNode expression)
         {
             if (expression == null) return null;
 
@@ -141,8 +146,63 @@ namespace CAS
             return flattenAdd;
         }
 
+        private static PolynomialTermComponent GetPolyTermComponent(ExprNode expression)
+        {
+            if (expression == null) return null;
+            if (expression is AtomNode)
+            {
+                return new PolynomialTermComponent { Base = ((AtomNode)expression).Data, Order = 1 };
+            }
+            else if (expression is OpNode)
+            {
+                var opNode = (OpNode)expression;
+
+                if (opNode.Operator == Operator.Pow)
+                {
+                    object left = opNode.Left;
+                    object right = opNode.Right;
+
+                    // Use primitive type double or string for Numeral or Variable
+                    if (opNode.Left is AtomNode)
+                        left = ((AtomNode)left).Data;
+                    if (opNode.Right is AtomNode)
+                        right = ((AtomNode)right).Data;
+
+                    return new PolynomialTermComponent { Base = left, Order = right };
+                }
+                else
+                    return new PolynomialTermComponent { Base = expression, Order = 1 };
+            }
+            else
+            {
+                return new PolynomialTermComponent { Base = expression, Order = 1 };
+            }
+        }
+
+        public static Polynomial Polynomialize(List<AdditionTerm> terms)
+        {
+            var polyList = new List<PolynomialTerm>();
+
+            foreach (var addTerm in terms)
+            {
+                var polyTerm = new PolynomialTerm { Coeff = 1 };
+
+                foreach (var mulTerm in addTerm.MultiplicationTerms)
+                {
+                    var polyTermComponent = GetPolyTermComponent(mulTerm.Expression);
+                    //if (mulTerm.Reciprocal)
+                        //polyTermComponent.Order;
+                  
+                }
+            }
+            return null;
+        }
+
+
         public static ExprNode Simplify(ExprNode expression)
         {
+            var terms = Flatten(expression);
+
             return null;
         }
     }

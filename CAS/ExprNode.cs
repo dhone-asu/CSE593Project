@@ -7,12 +7,87 @@ using System.Threading.Tasks;
 namespace CAS
 {
     public enum AtomType { Numeral, Identifier }
-    public class ExprNode: ICloneable
+
+
+    public class ExprNode : ICloneable
     {
+        public static readonly AtomNode One = new AtomNode
+        {
+            Data = 1,
+            Type = AtomType.Numeral
+        };
+
+        public static readonly AtomNode Zero = new AtomNode
+        {
+            Data = 0,
+            Type = AtomType.Numeral
+        };
+
         public virtual object Clone()
         {
             return new ExprNode();
         }
+
+        public static ExprNode operator ^(ExprNode a, ExprNode b)
+        {
+            return new OpNode
+            {
+                Operator = Operator.Pow,
+                Left = a,
+                Right = b
+            };
+        }
+
+        public static ExprNode operator -(ExprNode node)
+        {
+            return new OpNode
+            {
+                Operator = Operator.Neg,
+                Left = node
+            };
+        }
+
+        public static ExprNode operator/(ExprNode a, ExprNode b)
+        {
+            return new OpNode
+            {
+                Operator = Operator.Div,
+                Left = a,
+                Right = b
+            };
+        }
+
+        public static ExprNode operator *(ExprNode a, ExprNode b)
+        {
+            return new OpNode
+            {
+                Operator = Operator.Mult,
+                Left = a,
+                Right = b
+            };
+        }
+
+        public static ExprNode operator+(ExprNode a, ExprNode b)
+        {
+            return new OpNode
+            {
+                Operator = Operator.Plus,
+                Left = a,
+                Right = b
+            };
+        }
+
+        public static ExprNode operator-(ExprNode a, ExprNode b)
+        {
+            return new OpNode
+            {
+                Operator = Operator.Plus,
+                Left = a,
+                Right = b
+            };
+        }
+
+            
     }
     public class OpNode: ExprNode
     {
