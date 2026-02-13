@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CAS
 {
     public enum ParserContext { General, Params }
-    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Eq, Neq, Gt, Lt, Gte, Lte, Neg, Assign }
+    public enum Operator { None, Plus, Minus, Div, Mult, Pow, Eq, Neg, Assign }
 
     public class Parser
     {
@@ -19,11 +19,6 @@ namespace CAS
             { Operator.Plus, 3 },
             { Operator.Minus, 3 },
             { Operator.Eq, 2 },
-            { Operator.Neq, 2 },
-            { Operator.Gt, 2 },
-            { Operator.Lt, 2 },
-            { Operator.Gte, 2 },
-            { Operator.Lte, 2 },
             { Operator.Assign, 1 }
         };
 
@@ -35,10 +30,6 @@ namespace CAS
             {TokenType.Mult, Operator.Mult},
             {TokenType.Pow, Operator.Pow},
             {TokenType.Eq, Operator.Eq},
-            {TokenType.Gt, Operator.Gt},
-            {TokenType.Lt, Operator.Lt},
-            {TokenType.Gte, Operator.Gte},
-            {TokenType.Lte, Operator.Lte},
             {TokenType.Assign, Operator.Assign}
         };
 
@@ -139,21 +130,11 @@ namespace CAS
                 op = Expect(TokenType.Pow);
             else if (t.Type == TokenType.Eq)
                 op = Expect(TokenType.Eq);
-            else if (t.Type == TokenType.Neq)
-                op = Expect(TokenType.Neq);
-            else if (t.Type == TokenType.Gt)
-                op = Expect(TokenType.Gt);
-            else if (t.Type == TokenType.Lt)
-                op = Expect(TokenType.Lt);
-            else if (t.Type == TokenType.Gte)
-                op = Expect(TokenType.Gte);
-            else if (t.Type == TokenType.Lte)
-                op = Expect(TokenType.Lte);
             else if (t.Type == TokenType.Assign)
                 op = Expect(TokenType.Assign);
             else
             {
-                SyntaxError($"Unexpected operator '{t.Type}'");
+                SyntaxError($"Unexpected operator '{t.String}'");
                 return Operator.None; // This is to silence and error that op remains unassigned
             }
 
@@ -220,7 +201,7 @@ namespace CAS
             }
             else
             {
-                SyntaxError($"Unexpected operand type '{t.Type}'");
+                SyntaxError($"Unexpected operand '{t.String}'");
                 return null;
             }
         }
