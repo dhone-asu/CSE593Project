@@ -28,7 +28,7 @@ namespace CAS
         public Token GetToken()
         {
             if (index >= tokens.Count)
-                return new Token { Type = TokenType.EndOfInput };
+                return new Token { Type = TokenType.EndOfInput, String = "$" };
             else
             {
                 return tokens[index++];
@@ -52,7 +52,7 @@ namespace CAS
             int tempIndex = index + num - 1;
 
             if (tempIndex >= tokens.Count)
-                return new Token { Type = TokenType.EndOfInput };
+                return new Token { Type = TokenType.EndOfInput, String = "$" };
             else
                 return tokens[tempIndex];
         }
@@ -65,74 +65,44 @@ namespace CAS
 
             if (buffer.EndOfInput())
             {
-                return new Token { Type = TokenType.EndOfInput };
+                return new Token { Type = TokenType.EndOfInput, String = "$" };
             }
             else c = buffer.GetChar();
 
             switch (c)
             {
                 case '+':
-                    return new Token { Type = TokenType.Plus };
+                    return new Token { Type = TokenType.Plus, String = "+" };
                 case '-':
-                    return new Token { Type = TokenType.Minus };
+                    return new Token { Type = TokenType.Minus, String = "-" };
                 case '/':
-                    return new Token { Type = TokenType.Div };
+                    return new Token { Type = TokenType.Div, String = "/" };
                 case '*':
                     if (buffer.PeekChar() == '*')
                     {
                         buffer.GetChar();
-                        return new Token { Type = TokenType.Pow };
+                        return new Token { Type = TokenType.Pow, String="**" };
                     }
                     else
                     {
-                        return new Token { Type = TokenType.Mult };
+                        return new Token { Type = TokenType.Mult, String="*" };
                     }
                 case '^':
-                    return new Token { Type = TokenType.Pow };
+                    return new Token { Type = TokenType.Pow, String = "^" };
                 case '=':
                     if (buffer.PeekChar() == '=')
                     {
                         buffer.GetChar();
-                        return new Token { Type = TokenType.Eq };
+                        return new Token { Type = TokenType.Eq, String = "==" };
                     }
                     else
-                        return new Token { Type = TokenType.Assign };
-                case '<':
-                    if (buffer.PeekChar() == '=')
-                    {
-                        buffer.GetChar();
-                        return new Token { Type = TokenType.Lte };
-                    }
-                    else
-                    {
-                        return new Token { Type = TokenType.Lt };
-                    }
-                case '>':
-                    if (buffer.PeekChar() == '=')
-                    {
-                        buffer.GetChar();
-                        return new Token { Type = TokenType.Gte };
-                    }
-                    else
-                    {
-                        return new Token { Type = TokenType.Gt };
-                    }
-                case '!':
-                    if (buffer.PeekChar() == '=')
-                    {
-                        buffer.GetChar();
-                        return new Token { Type = TokenType.Neq };
-                    }
-                    else
-                    {
-                        return new Token { Type = TokenType.Error };
-                    }
+                        return new Token { Type = TokenType.Assign, String = "=" };
                 case '(':
-                    return new Token { Type = TokenType.LParen };
+                    return new Token { Type = TokenType.LParen, String = "(" };
                 case ')':
-                    return new Token { Type = TokenType.RParen };
+                    return new Token { Type = TokenType.RParen, String = ")" };
                 case ',':
-                    return new Token { Type = TokenType.Comma };
+                    return new Token { Type = TokenType.Comma, String = "," };
                 default:
                     if (char.IsLetter(c))
                     {
@@ -146,7 +116,7 @@ namespace CAS
                     }
                     else
                     {
-                        return new Token { Type = TokenType.Error };
+                        return new Token { Type = TokenType.Error, String = $"{c}" };
                     }
             }
         }

@@ -28,11 +28,6 @@ namespace CAS
             { Operator.Mult, "*" },
             { Operator.Pow, "^" },
             { Operator.Eq, "=="  },
-            { Operator.Neq, "!=" },
-            { Operator.Gt, ">" },
-            { Operator.Lt, "<" },
-            { Operator.Gte, ">=" },
-            { Operator.Lte, "<=" },
             { Operator.Neg, "-" },
             { Operator.Assign, "=" }
         };
