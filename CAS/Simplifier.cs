@@ -193,6 +193,21 @@ namespace CAS
             };
         }
 
+        private static PolynomialTerm SimplifyComponents(PolynomialTerm term)
+        {
+            return null;
+        }
+
+        private static Polynomial SimplifyTerms(Polynomial poly)
+        {
+            foreach (var term in poly.Terms)
+            {
+                //term.Components = SimplifyComponents(term)
+            }
+
+            return null;
+        }
+
 
         public static ExprNode Simplify(ExprNode expression)
         {
