@@ -13,13 +13,13 @@ namespace CAS
     {
         public static readonly AtomNode One = new AtomNode
         {
-            Data = 1,
+            Data = 1.0,
             Type = AtomType.Numeral
         };
 
         public static readonly AtomNode Zero = new AtomNode
         {
-            Data = 0,
+            Data = 0.0,
             Type = AtomType.Numeral
         };
 
@@ -40,11 +40,18 @@ namespace CAS
 
         public static ExprNode operator -(ExprNode node)
         {
-            return new OpNode
+            if (node is AtomNode && ((AtomNode)node).Type == AtomType.Numeral)
             {
-                Operator = Operator.Neg,
-                Left = node
-            };
+                var result = (AtomNode)node.Clone();
+                result.Data = -(double)result.Data;
+                return result;
+            }
+            else
+                return new OpNode
+                {
+                    Operator = Operator.Neg,
+                    Left = node
+                };
         }
 
         public static ExprNode operator/(ExprNode a, ExprNode b)

@@ -11,8 +11,8 @@ namespace CAS
 
     public class PolynomialTermComponent
     {
-        public object Base { get; set; }
-        public object Order { get; set; }
+        public ExprNode Base { get; set; }
+        public ExprNode Order { get; set; }
     }
 
     public class PolynomialTerm
@@ -151,7 +151,7 @@ namespace CAS
             if (expression == null) return null;
             if (expression is AtomNode)
             {
-                return new PolynomialTermComponent { Base = ((AtomNode)expression).Data, Order = 1 };
+                return new PolynomialTermComponent { Base = expression, Order = ExprNode.One };
             }
             else if (expression is OpNode)
             {
@@ -159,23 +159,14 @@ namespace CAS
 
                 if (opNode.Operator == Operator.Pow)
                 {
-                    object left = opNode.Left;
-                    object right = opNode.Right;
-
-                    // Use primitive type double or string for Numeral or Variable
-                    if (opNode.Left is AtomNode)
-                        left = ((AtomNode)left).Data;
-                    if (opNode.Right is AtomNode)
-                        right = ((AtomNode)right).Data;
-
-                    return new PolynomialTermComponent { Base = left, Order = right };
+                    return new PolynomialTermComponent { Base = opNode.Left, Order = opNode.Right };
                 }
                 else
-                    return new PolynomialTermComponent { Base = expression, Order = 1 };
+                    return new PolynomialTermComponent { Base = expression, Order = ExprNode.One };
             }
             else
             {
-                return new PolynomialTermComponent { Base = expression, Order = 1 };
+                return new PolynomialTermComponent { Base = expression, Order = ExprNode.One };
             }
         }
 
@@ -190,12 +181,16 @@ namespace CAS
                 foreach (var mulTerm in addTerm.MultiplicationTerms)
                 {
                     var polyTermComponent = GetPolyTermComponent(mulTerm.Expression);
-                    //if (mulTerm.Reciprocal)
-                        //polyTermComponent.Order;
-                  
+                    if (mulTerm.Reciprocal)
+                        polyTermComponent.Order = -polyTermComponent.Order;
+                    polyTerm.Components.Add(polyTermComponent);
                 }
+                polyList.Add(polyTerm);
             }
-            return null;
+            return new Polynomial
+            {
+                Terms = polyList
+            };
         }
 
 
