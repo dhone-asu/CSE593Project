@@ -9,7 +9,7 @@ namespace CAS
     public enum AtomType { Numeral, Identifier }
 
 
-    public class ExprNode : ICloneable
+    public class ExprNode : ICloneable, IEquatable<ExprNode>
     {
         public static readonly AtomNode One = new AtomNode
         {
@@ -26,6 +26,11 @@ namespace CAS
         public virtual object Clone()
         {
             return new ExprNode();
+        }
+
+        public virtual bool Equals(ExprNode a)
+        {
+            return true;
         }
 
         public static ExprNode operator ^(ExprNode a, ExprNode b)
@@ -111,6 +116,18 @@ namespace CAS
                 Right = (ExprNode)Right?.Clone(),
             };
         }
+
+        public override bool Equals(ExprNode a)
+        {
+            if (a is OpNode)
+            {
+                var node = (OpNode)a;
+
+                return (Operator == node.Operator && Left.Equals(node.Left) && Right.Equals(node.Right));
+            }
+            else
+                return false;
+        }
     }
 
     public class FunctionNode : ExprNode
@@ -133,6 +150,26 @@ namespace CAS
                 Params = newParams
             };
         }
+
+        public override bool Equals(ExprNode a)
+        {
+            if (a is FunctionNode)
+            {
+                var node = (FunctionNode)a;
+
+                if (Name != node.Name || Params.Count != node.Params.Count)
+                    return false;
+
+                for (int i = 0; i < Params.Count; i++)
+                {
+                    if (!Params[i].Equals(node.Params[i]))
+                        return false;
+                }
+                return true;
+                
+            }
+            else return false;
+        }
     }
 
     public class AtomNode : ExprNode
@@ -147,6 +184,22 @@ namespace CAS
                 Data = Data,
                 Type = Type
             };
+        }
+
+        public override bool Equals(ExprNode a)
+        {
+            if (a is AtomNode)
+            {
+                var node = (AtomNode)a;
+
+                if (Type != node.Type) return false;
+
+                if (Type == AtomType.Numeral)
+                    return ((double)Data) == ((double)node.Data);
+                else
+                    return ((string)Data) == ((string)node.Data); 
+            }
+            else return false;
         }
     }
 }
