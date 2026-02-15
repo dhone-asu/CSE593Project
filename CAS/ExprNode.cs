@@ -30,7 +30,20 @@ namespace CAS
 
         public virtual bool Equals(ExprNode a)
         {
-            return true;
+            return (object)a != null;
+        }
+
+        public static bool operator==(ExprNode a, ExprNode b)
+        {
+            if ((object)a == null)
+                return (object)b == null;
+            else
+                return a.Equals(b); 
+        }
+
+        public static bool operator !=(ExprNode a, ExprNode b)
+        {
+            return !a.Equals(b);
         }
 
         public static ExprNode operator ^(ExprNode a, ExprNode b)
