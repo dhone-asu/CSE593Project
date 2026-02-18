@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CAS
 {
 
-    public class MonomialComponent
+    public class MonomialFactor
     {
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
@@ -18,7 +18,7 @@ namespace CAS
     public class Monomial
     {
         public double Coeff { get; set; }
-        public List<MonomialComponent> Components { get; set; } = new List<MonomialComponent>();
+        public List<MonomialFactor> Factors { get; set; } = new List<MonomialFactor>();
     }
 
     public class Polynomial
@@ -146,12 +146,12 @@ namespace CAS
             return flattenAdd;
         }
 
-        private static MonomialComponent GetPolyTermComponent(ExprNode expression)
+        private static MonomialFactor GetPolyTermComponent(ExprNode expression)
         {
             if (expression == null) return null;
             if (expression is AtomNode)
             {
-                return new MonomialComponent { Base = expression, Order = ExprNode.One };
+                return new MonomialFactor { Base = expression, Order = ExprNode.One };
             }
             else if (expression is OpNode)
             {
@@ -159,14 +159,14 @@ namespace CAS
 
                 if (opNode.Operator == Operator.Pow)
                 {
-                    return new MonomialComponent { Base = opNode.Left, Order = opNode.Right };
+                    return new MonomialFactor { Base = opNode.Left, Order = opNode.Right };
                 }
                 else
-                    return new MonomialComponent { Base = expression, Order = ExprNode.One };
+                    return new MonomialFactor { Base = expression, Order = ExprNode.One };
             }
             else
             {
-                return new MonomialComponent { Base = expression, Order = ExprNode.One };
+                return new MonomialFactor { Base = expression, Order = ExprNode.One };
             }
         }
 
@@ -183,7 +183,7 @@ namespace CAS
                     var polyTermComponent = GetPolyTermComponent(mulTerm.Expression);
                     if (mulTerm.Reciprocal)
                         polyTermComponent.Order = -polyTermComponent.Order;
-                    polyTerm.Components.Add(polyTermComponent);
+                    polyTerm.Factors.Add(polyTermComponent);
                 }
                 polyList.Add(polyTerm);
             }
