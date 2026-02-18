@@ -146,7 +146,7 @@ namespace CAS
             return flattenAdd;
         }
 
-        private static MonomialFactor GetPolyTermComponent(ExprNode expression)
+        private static MonomialFactor GetFactor(ExprNode expression)
         {
             if (expression == null) return null;
             if (expression is AtomNode)
@@ -176,16 +176,16 @@ namespace CAS
 
             foreach (var addTerm in terms)
             {
-                var polyTerm = new Monomial { Coeff = 1 };
+                var mono = new Monomial { Coeff = 1 };
 
                 foreach (var mulTerm in addTerm.MultiplicationTerms)
                 {
-                    var polyTermComponent = GetPolyTermComponent(mulTerm.Expression);
+                    var factor = GetFactor(mulTerm.Expression);
                     if (mulTerm.Reciprocal)
-                        polyTermComponent.Order = -polyTermComponent.Order;
-                    polyTerm.Factors.Add(polyTermComponent);
+                        factor.Order = -factor.Order;
+                    mono.Factors.Add(factor);
                 }
-                polyList.Add(polyTerm);
+                polyList.Add(mono);
             }
             return new Polynomial
             {
