@@ -9,21 +9,21 @@ using System.Threading.Tasks;
 namespace CAS
 {
 
-    public class PolynomialTermComponent
+    public class MonomialComponent
     {
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
     }
 
-    public class PolynomialTerm
+    public class Monomial
     {
         public double Coeff { get; set; }
-        public List<PolynomialTermComponent> Components { get; set; } = new List<PolynomialTermComponent>();
+        public List<MonomialComponent> Components { get; set; } = new List<MonomialComponent>();
     }
 
     public class Polynomial
     {
-        public List<PolynomialTerm> Terms { get; set; } = new List<PolynomialTerm>();
+        public List<Monomial> Terms { get; set; } = new List<Monomial>();
     }
 
     public class AdditionTerm
@@ -146,12 +146,12 @@ namespace CAS
             return flattenAdd;
         }
 
-        private static PolynomialTermComponent GetPolyTermComponent(ExprNode expression)
+        private static MonomialComponent GetPolyTermComponent(ExprNode expression)
         {
             if (expression == null) return null;
             if (expression is AtomNode)
             {
-                return new PolynomialTermComponent { Base = expression, Order = ExprNode.One };
+                return new MonomialComponent { Base = expression, Order = ExprNode.One };
             }
             else if (expression is OpNode)
             {
@@ -159,24 +159,24 @@ namespace CAS
 
                 if (opNode.Operator == Operator.Pow)
                 {
-                    return new PolynomialTermComponent { Base = opNode.Left, Order = opNode.Right };
+                    return new MonomialComponent { Base = opNode.Left, Order = opNode.Right };
                 }
                 else
-                    return new PolynomialTermComponent { Base = expression, Order = ExprNode.One };
+                    return new MonomialComponent { Base = expression, Order = ExprNode.One };
             }
             else
             {
-                return new PolynomialTermComponent { Base = expression, Order = ExprNode.One };
+                return new MonomialComponent { Base = expression, Order = ExprNode.One };
             }
         }
 
         public static Polynomial Polynomialize(List<AdditionTerm> terms)
         {
-            var polyList = new List<PolynomialTerm>();
+            var polyList = new List<Monomial>();
 
             foreach (var addTerm in terms)
             {
-                var polyTerm = new PolynomialTerm { Coeff = 1 };
+                var polyTerm = new Monomial { Coeff = 1 };
 
                 foreach (var mulTerm in addTerm.MultiplicationTerms)
                 {
@@ -193,7 +193,7 @@ namespace CAS
             };
         }
 
-        private static PolynomialTerm SimplifyComponents(PolynomialTerm term)
+        private static Monomial SimplifyComponents(Monomial term)
         {
             return null;
         }
