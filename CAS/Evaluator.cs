@@ -126,7 +126,7 @@ namespace CAS
                 throw new EvaluatorException("Node type not supported.");
         }
 
-        private double Compute(Operator op, double a, double b)
+        public static double Compute(Operator op, double a, double b)
         {
             switch (op)
             {

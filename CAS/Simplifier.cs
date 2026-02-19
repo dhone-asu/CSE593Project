@@ -13,6 +13,7 @@ namespace CAS
     {
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
+        public double? Constant { get; set; }
     }
 
     public class Monomial
@@ -193,16 +194,27 @@ namespace CAS
             };
         }
 
-        private static Monomial SimplifyComponents(Monomial term)
+        private static Monomial SimplifyFactors(Monomial mono)
         {
+            var variables = new List<string>();
+            
+            foreach (var factor in mono.Factors)
+            {
+                if (factor.Base is AtomNode && factor.Order is AtomNode &&
+                    ((AtomNode)factor.Base).Type == AtomType.Numeral &&
+                    ((AtomNode)factor.Order).Type == AtomType.Numeral)
+                {
+
+                }
+            }
             return null;
         }
 
         private static Polynomial SimplifyTerms(Polynomial poly)
         {
-            foreach (var term in poly.Terms)
+            foreach (var mono in poly.Terms)
             {
-                //term.Components = SimplifyComponents(term)
+                //term.Components = SimplifyComponents(mono)
             }
 
             return null;
