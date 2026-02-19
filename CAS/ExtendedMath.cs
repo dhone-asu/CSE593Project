@@ -54,6 +54,26 @@ namespace CAS
             return Math.Log((1 + a) / (1 - a)) / 2.0;
         }
 
+        private static double NextW(double w, double x)
+        {
+            return w - (w*Math.Exp(w) - x)/((1+w)*Math.Exp(w));
+        }
+
+        public static double LambertW(double x)
+        {
+            if (x < -Math.Exp(-1))
+                return double.NaN;
+            double w = 1.0;
+
+            while (true)
+            {
+                double wPrev = w;
+                w = NextW(w, x);
+                if (Math.Abs(w - wPrev) < 1E-10)
+                    return w;
+            }
+        }
+
         public static double Integrate(Func<double,double> function, double a, double b)
         {
             double n = 1e8;
