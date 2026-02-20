@@ -39,10 +39,15 @@ namespace CAS
         }
     }
 
-    public class Monomial
+    public class Monomial: IEquatable<Monomial>
     {
         public double Coeff { get; set; }
         public List<MonomialFactor> Factors { get; set; } = new List<MonomialFactor>();
+
+        public bool Equals(Monomial a)
+        {
+            return true;
+        }
     }
 
     public class Polynomial
@@ -55,13 +60,25 @@ namespace CAS
 
             foreach (var term in Terms)
             {
-                ExprNode newTerm = new AtomNode { Data = term.Coeff, Type = AtomType.Numeral };
+                ExprNode newTerm = null;
+                if (term.Coeff != 1.0 || term.Factors.Count() == 0)
+                    newTerm = new AtomNode { Data = term.Coeff, Type = AtomType.Numeral };
                 foreach (var factor in term.Factors)
                 {
                     if (factor.Order == ExprNode.One)
-                        newTerm = newTerm * factor.Base;
+                    {
+                        if (newTerm == null)
+                            newTerm = factor.Base;
+                        else
+                            newTerm = newTerm * factor.Base;
+                    }
                     else
-                        newTerm = newTerm * (factor.Base ^ factor.Order);
+                    {
+                        if (newTerm == null)
+                            newTerm = factor.Base ^ factor.Order;
+                        else
+                            newTerm = newTerm * (factor.Base ^ factor.Order);
+                    }
                 }
                 if (result == null)
                     result = newTerm;
@@ -283,7 +300,8 @@ namespace CAS
             foreach (var mono in poly.Terms)
             {
                 var newTerm = SimplifyFactors(mono);
-                result.Terms.Add(newTerm);
+                if (newTerm.Coeff != 0)
+                    result.Terms.Add(newTerm);
             }
 
             return result;

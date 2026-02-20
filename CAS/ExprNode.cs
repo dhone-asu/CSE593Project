@@ -43,7 +43,10 @@ namespace CAS
 
         public static bool operator !=(ExprNode a, ExprNode b)
         {
-            return !a.Equals(b);
+            if ((object)a == null)
+                return (object)b != null;
+            else
+                return !a.Equals(b);
         }
 
         public static ExprNode operator ^(ExprNode a, ExprNode b)
