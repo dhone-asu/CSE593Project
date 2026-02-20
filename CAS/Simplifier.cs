@@ -295,7 +295,9 @@ namespace CAS
                     result.Coeff *= value;
                 }
                 else
-                { 
+                {
+                    factor.Order = Simplify(factor.Order);
+                    factor.Base = Simplify(factor.Base);
                     if (!baseExpressions.Contains(factor.Base))
                     {
                         baseExpressions.Add(factor.Base);
@@ -343,6 +345,9 @@ namespace CAS
 
         public static ExprNode Simplify(ExprNode expression)
         {
+            if (expression is AtomNode)
+                return expression;
+
             var terms = Flatten(expression);
             var poly = Polynomialize(terms);
             var result = SimplifyTerms(poly);
