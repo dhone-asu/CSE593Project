@@ -261,6 +261,8 @@ namespace CAS
             foreach (var addTerm in terms)
             {
                 var mono = new Monomial { Coeff = 1 };
+                if (addTerm.Negative)
+                    mono.Coeff = -1;
 
                 foreach (var mulTerm in addTerm.MultiplicationTerms)
                 {
@@ -281,7 +283,7 @@ namespace CAS
         {
             var variables = new List<string>();
             var baseExpressions = new List<ExprNode>();
-            var result = new Monomial { Coeff = 1 };
+            var result = new Monomial { Coeff = mono.Coeff };
             
             foreach (var factor in mono.Factors)
             {
