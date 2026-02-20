@@ -90,7 +90,7 @@ namespace CAS
 
                 if (!string.IsNullOrEmpty(rightExpr))
                 {
-                    string s = $"{leftExpr} {OperatorToStringMap[opNode.Operator]} {rightExpr}";
+                    string s = $"{leftExpr}{OperatorToStringMap[opNode.Operator]}{rightExpr}";
                     return s;
                 }
                 else

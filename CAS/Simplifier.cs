@@ -13,7 +13,30 @@ namespace CAS
     {
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
-        public double? Constant { get; set; }
+
+        public static MonomialFactor operator*(MonomialFactor a, MonomialFactor b)
+        {
+            if (a.Base == b.Base)
+            {
+                var newFactor = new MonomialFactor
+                {
+                    Base = a.Base,
+                    Order = Evaluator.Evaluate(a.Order + b.Order)
+                };
+
+                return newFactor;
+            }
+            else
+            {
+                var newFactor = new MonomialFactor
+                {
+                    Base = (a.Base ^ a.Order) * (b.Base ^ b.Order),
+                    Order = ExprNode.One
+                };
+
+                return newFactor;
+            }
+        }
     }
 
     public class Monomial
@@ -25,6 +48,28 @@ namespace CAS
     public class Polynomial
     {
         public List<Monomial> Terms { get; set; } = new List<Monomial>();
+
+        public ExprNode ToExpression()
+        {
+            ExprNode result = null;
+
+            foreach (var term in Terms)
+            {
+                ExprNode newTerm = new AtomNode { Data = term.Coeff, Type = AtomType.Numeral };
+                foreach (var factor in term.Factors)
+                {
+                    if (factor.Order == ExprNode.One)
+                        newTerm = newTerm * factor.Base;
+                    else
+                        newTerm = newTerm * (factor.Base ^ factor.Order);
+                }
+                if (result == null)
+                    result = newTerm;
+                else
+                    result = result + newTerm;
+            }
+            return result;
+        }
     }
 
     public class AdditionTerm
@@ -197,6 +242,8 @@ namespace CAS
         private static Monomial SimplifyFactors(Monomial mono)
         {
             var variables = new List<string>();
+            var baseExpressions = new List<ExprNode>();
+            var result = new Monomial { Coeff = 1 };
             
             foreach (var factor in mono.Factors)
             {
@@ -204,28 +251,52 @@ namespace CAS
                     ((AtomNode)factor.Base).Type == AtomType.Numeral &&
                     ((AtomNode)factor.Order).Type == AtomType.Numeral)
                 {
+                    var baseVal = (double)((AtomNode)factor.Base).Data;
+                    var orderVal = (double)((AtomNode)factor.Order).Data;
+                    double value = Math.Pow(baseVal, orderVal);
+                    result.Coeff *= value;
+                }
+                else
+                { 
+                    if (!baseExpressions.Contains(factor.Base))
+                    {
+                        baseExpressions.Add(factor.Base);
+                        result.Factors.Add(factor);
+                    }
+                    else
+                    {
+                        var existing = result.Factors.Find(x => x.Base == factor.Base);
+                        result.Factors.Remove(existing);
 
+                        var newFactor = existing * factor;
+                        result.Factors.Add(newFactor);
+                    }
                 }
             }
-            return null;
+            return result;
         }
 
         private static Polynomial SimplifyTerms(Polynomial poly)
         {
+            var result = new Polynomial();
+
             foreach (var mono in poly.Terms)
             {
-                //term.Components = SimplifyComponents(mono)
+                var newTerm = SimplifyFactors(mono);
+                result.Terms.Add(newTerm);
             }
 
-            return null;
+            return result;
         }
 
 
         public static ExprNode Simplify(ExprNode expression)
         {
             var terms = Flatten(expression);
+            var poly = Polynomialize(terms);
+            var result = SimplifyTerms(poly);
 
-            return null;
+            return result.ToExpression();
         }
     }
 }

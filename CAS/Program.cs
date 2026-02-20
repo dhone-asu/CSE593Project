@@ -28,17 +28,17 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                var flattened = Simplifier.Flatten(result);
-                var poly = Simplifier.Polynomialize(flattened);
+                var simplified = Simplifier.Simplify(result);
+                Console.WriteLine(Evaluator.PrintExpression(simplified));
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
                     Value = result
                 });
-                if (result is AtomNode)
+                /*if (result is AtomNode)
                     Console.WriteLine(((AtomNode)result).Data);
                 else
-                    Console.WriteLine(Evaluator.PrintExpression(result));
+                    Console.WriteLine(Evaluator.PrintExpression(result));*/
                 Console.WriteLine();
             }
         }
