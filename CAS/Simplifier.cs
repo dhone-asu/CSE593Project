@@ -9,10 +9,15 @@ using System.Threading.Tasks;
 namespace CAS
 {
 
-    public class MonomialFactor
+    public class MonomialFactor: IEquatable<MonomialFactor>
     {
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
+
+        public bool Equals(MonomialFactor a)
+        {
+            return Base == a.Base && Order == a.Order;
+        }
 
         public static MonomialFactor operator*(MonomialFactor a, MonomialFactor b)
         {
@@ -44,9 +49,25 @@ namespace CAS
         public double Coeff { get; set; }
         public List<MonomialFactor> Factors { get; set; } = new List<MonomialFactor>();
 
+        public bool FactorsMatch(Monomial a)
+        {
+            if (Factors.Count != a.Factors.Count)
+                return false;
+
+            var factors = new List<MonomialFactor>(Factors);
+
+            foreach (var factor in a.Factors)
+            {
+                var item = factors.Find(x => x.Equals(factor));
+
+                if (item != null)
+                    factors.Remove(item);
+            }
+            return (factors.Count == 0);
+        }
         public bool Equals(Monomial a)
         {
-            return true;
+            return this.Coeff != a.Coeff && FactorsMatch(a);
         }
     }
 
@@ -295,15 +316,27 @@ namespace CAS
 
         private static Polynomial SimplifyTerms(Polynomial poly)
         {
-            var result = new Polynomial();
+            var simplified = new Polynomial();
 
             foreach (var mono in poly.Terms)
             {
                 var newTerm = SimplifyFactors(mono);
                 if (newTerm.Coeff != 0)
-                    result.Terms.Add(newTerm);
+                    simplified.Terms.Add(newTerm);
             }
 
+            var result = new Polynomial();
+
+            foreach (var mono in simplified.Terms)
+            {
+                var match = result.Terms.Find(x => mono.FactorsMatch(x));
+
+                if (match == null)
+                    result.Terms.Add(mono);
+                else
+                    match.Coeff += mono.Coeff;
+
+            }
             return result;
         }
 
