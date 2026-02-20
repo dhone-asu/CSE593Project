@@ -294,9 +294,13 @@ namespace CAS
             var variables = new List<string>();
             var baseExpressions = new List<ExprNode>();
             var result = new Monomial { Coeff = mono.Coeff };
+
             
             foreach (var factor in mono.Factors)
             {
+                factor.Base = Simplify(factor.Base);
+                factor.Order = Simplify(factor.Order);
+
                 if (factor.Base is AtomNode && factor.Order is AtomNode &&
                     ((AtomNode)factor.Base).Type == AtomType.Numeral &&
                     ((AtomNode)factor.Order).Type == AtomType.Numeral)
@@ -308,8 +312,6 @@ namespace CAS
                 }
                 else
                 {
-                    factor.Order = Simplify(factor.Order);
-                    factor.Base = Simplify(factor.Base);
                     if (!baseExpressions.Contains(factor.Base))
                     {
                         baseExpressions.Add(factor.Base);
