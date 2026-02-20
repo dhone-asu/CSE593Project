@@ -82,8 +82,8 @@ namespace CAS
             foreach (var term in Terms)
             {
                 ExprNode newTerm = null;
-                if (term.Coeff != 1.0 || term.Factors.Count() == 0)
-                    newTerm = new AtomNode { Data = term.Coeff, Type = AtomType.Numeral };
+                if (Math.Abs(term.Coeff) != 1.0 || term.Factors.Count() == 0)
+                    newTerm = new AtomNode { Data = Math.Abs(term.Coeff), Type = AtomType.Numeral };
                 foreach (var factor in term.Factors)
                 {
                     if (factor.Order == ExprNode.One)
@@ -102,9 +102,19 @@ namespace CAS
                     }
                 }
                 if (result == null)
-                    result = newTerm;
+                {
+                    if (term.Coeff >= 0)
+                        result = newTerm;
+                    else
+                        result = -newTerm;
+                }
                 else
-                    result = result + newTerm;
+                {
+                    if (term.Coeff >= 0)
+                        result = result + newTerm;
+                    else
+                        result = result - newTerm;
+                }
             }
             return result;
         }
