@@ -109,7 +109,7 @@ namespace CAS
         {
             return new OpNode
             {
-                Operator = Operator.Plus,
+                Operator = Operator.Minus,
                 Left = a,
                 Right = b
             };
