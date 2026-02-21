@@ -26,7 +26,7 @@ namespace CAS
                 var newFactor = new MonomialFactor
                 {
                     Base = a.Base,
-                    Order = Evaluator.Evaluate(a.Order + b.Order)
+                    Order = Simplifier.Simplify(a.Order + b.Order)
                 };
 
                 return newFactor;
