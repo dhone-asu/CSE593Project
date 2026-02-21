@@ -149,7 +149,7 @@ namespace CAS
     public class FunctionNode : ExprNode
     {
         public string Name { get; set; }
-        public List<ExprNode> Params { get; set; }
+        public List<ExprNode> Params { get; set; } = new List<ExprNode>();
 
         public override object Clone()
         {

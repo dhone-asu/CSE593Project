@@ -359,17 +359,33 @@ namespace CAS
             return result;
         }
 
+        public static FunctionNode SimplifyFunction(FunctionNode node)
+        {
+            var result = new FunctionNode { Name = node.Name };
+
+            foreach (var param in node.Params)
+            {
+                result.Params.Add(Simplify(param));
+            }
+
+            return result;
+        }
+
 
         public static ExprNode Simplify(ExprNode expression)
         {
             if (expression is AtomNode)
                 return expression;
+            else if (expression is FunctionNode)
+                return SimplifyFunction((FunctionNode)expression);
+            else
+            {
+                var terms = Flatten(expression);
+                var poly = Polynomialize(terms);
+                var result = SimplifyTerms(poly);
 
-            var terms = Flatten(expression);
-            var poly = Polynomialize(terms);
-            var result = SimplifyTerms(poly);
-
-            return result.ToExpression();
+                return result.ToExpression();
+            }
         }
     }
 }
