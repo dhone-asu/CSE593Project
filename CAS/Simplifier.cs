@@ -77,6 +77,9 @@ namespace CAS
 
         public ExprNode ToExpression()
         {
+            if (Terms.Count == 0)
+                return ExprNode.Zero;
+
             ExprNode result = null;
 
             foreach (var term in Terms)
@@ -337,12 +340,8 @@ namespace CAS
             foreach (var mono in poly.Terms)
             {
                 var newTerm = SimplifyFactors(mono);
-                if (newTerm.Coeff == 0)
-                    newTerm = new Monomial
-                    {
-                        Coeff = 0.0
-                    };
-                simplified.Terms.Add(newTerm);
+                if (newTerm.Coeff != 0)
+                    simplified.Terms.Add(newTerm);
             }
 
             var result = new Polynomial();
