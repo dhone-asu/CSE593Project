@@ -67,7 +67,7 @@ namespace CAS
         }
         public bool Equals(Monomial a)
         {
-            return this.Coeff != a.Coeff && FactorsMatch(a);
+            return this.Coeff == a.Coeff && FactorsMatch(a);
         }
     }
 
