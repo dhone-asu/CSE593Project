@@ -337,8 +337,12 @@ namespace CAS
             foreach (var mono in poly.Terms)
             {
                 var newTerm = SimplifyFactors(mono);
-                if (newTerm.Coeff != 0)
-                    simplified.Terms.Add(newTerm);
+                if (newTerm.Coeff == 0)
+                    newTerm = new Monomial
+                    {
+                        Coeff = 0.0
+                    };
+                simplified.Terms.Add(newTerm);
             }
 
             var result = new Polynomial();
