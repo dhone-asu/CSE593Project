@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Polynomial.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Simplifier.cs" />
     <Compile Include="SymbolManagement\ConstantManager.cs" />
