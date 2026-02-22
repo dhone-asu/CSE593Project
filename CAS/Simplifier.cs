@@ -353,9 +353,12 @@ namespace CAS
                 if (match == null)
                     result.Terms.Add(mono);
                 else
+                {
                     match.Coeff += mono.Coeff;
-
+                }
             }
+
+            result.Terms.RemoveAll(x => x.Coeff == 0); // Remove any coeffs that became zero
             return result;
         }
 
