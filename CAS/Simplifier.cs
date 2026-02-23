@@ -223,6 +223,34 @@ namespace CAS
             return result;
         }
 
+        private static Polynomial ReFlatten(Polynomial polynomial)
+        {
+            var result = new Polynomial();
+
+            foreach (var mono in polynomial.Terms)
+            {
+                if (mono.Factors.Count == 1 &&
+                    mono.Factors[0].Base is OpNode &&
+                    mono.Factors[0].Order == ExprNode.One &&
+                    ((((OpNode)mono.Factors[0].Base).Operator == Operator.Plus) ||
+                    ((OpNode)mono.Factors[0].Base).Operator == Operator.Minus))
+                {
+                    var poly = Polynomialize(mono.Factors[0].Base);
+                    var newPoly = new Polynomial();
+
+                    foreach (var term in poly.Terms)
+                    {
+                        newPoly.Terms.Add(SimplifyFactors(term));
+                    }    
+                    result.Terms.AddRange(newPoly.Terms);
+                }
+                else
+                    result.Terms.Add(mono);
+            }
+
+            return result;
+        }
+
         private static Polynomial SimplifyTerms(Polynomial poly)
         {
             var simplified = new Polynomial();
@@ -233,6 +261,8 @@ namespace CAS
                 if (newTerm.Coeff != 0)
                     simplified.Terms.Add(newTerm);
             }
+
+            simplified = ReFlatten(simplified);
 
             var result = new Polynomial();
 
