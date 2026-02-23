@@ -152,8 +152,9 @@ namespace CAS
             }
         }
 
-        public static Polynomial Polynomialize(List<AdditionTerm> terms)
+        public static Polynomial Polynomialize(ExprNode expression)
         {
+            var terms = Flatten(expression);
             var polyList = new List<Monomial>();
 
             foreach (var addTerm in terms)
@@ -272,8 +273,7 @@ namespace CAS
                 return SimplifyFunction((FunctionNode)expression);
             else
             {
-                var terms = Flatten(expression);
-                var poly = Polynomialize(terms);
+                var poly = Polynomialize(expression);
                 var result = SimplifyTerms(poly);
 
                 return result.ToExpression();
