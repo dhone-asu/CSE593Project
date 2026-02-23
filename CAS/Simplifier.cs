@@ -216,7 +216,8 @@ namespace CAS
                         result.Factors.Remove(existing);
 
                         var newFactor = existing * factor;
-                        result.Factors.Add(newFactor);
+                        if (!newFactor.Equals(MonomialFactor.One))
+                            result.Factors.Add(newFactor);
                     }
                 }
             }

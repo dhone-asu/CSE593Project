@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CAS
@@ -10,6 +11,9 @@ namespace CAS
     {
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
+
+        public static readonly MonomialFactor One = 
+            new MonomialFactor { Base = ExprNode.One, Order = ExprNode.One };
 
         public bool Equals(MonomialFactor a)
         {
@@ -37,6 +41,9 @@ namespace CAS
                     Base = a.Base,
                     Order = Simplifier.Simplify(a.Order + b.Order)
                 };
+
+                if (newFactor.Order == ExprNode.Zero)
+                    newFactor = new MonomialFactor { Base = ExprNode.One, Order = ExprNode.One };
 
                 return newFactor;
             }
