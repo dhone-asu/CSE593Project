@@ -187,6 +187,13 @@ namespace CAS
             
             foreach (var factor in mono.Factors)
             {
+                if (factor.Base is OpNode && ((OpNode)factor.Base).Operator == Operator.Pow)
+                {
+                    var baseFactor = GetFactor(factor.Base);
+                    factor.Base = baseFactor.Base;
+                    factor.Order = baseFactor.Order * factor.Order;
+                }
+
                 factor.Base = Simplify(factor.Base);
                 factor.Order = Simplify(factor.Order);
 
