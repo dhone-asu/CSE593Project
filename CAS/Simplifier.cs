@@ -240,7 +240,9 @@ namespace CAS
 
                     foreach (var term in poly.Terms)
                     {
-                        newPoly.Terms.Add(SimplifyFactors(term));
+                        var newTerm = SimplifyFactors(term);
+                        newTerm.Coeff *= mono.Coeff; 
+                        newPoly.Terms.Add(newTerm);
                     }    
                     result.Terms.AddRange(newPoly.Terms);
                 }
