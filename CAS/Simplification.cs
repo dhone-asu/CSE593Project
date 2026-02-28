@@ -19,7 +19,7 @@ namespace CAS
         public ExprNode Expression { get; set; }
         public bool Reciprocal { get; set; }
     }
-    public class Simplifier
+    public class Simplification
     {
 
         private static List<AdditionTerm> FlattenAddition(ExprNode expression)

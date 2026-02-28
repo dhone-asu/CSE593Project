@@ -28,7 +28,7 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                var simplified = Simplifier.Simplify(result);
+                var simplified = Simplification.Simplify(result);
                 simplified = Evaluator.Evaluate(simplified);
                 Console.WriteLine(Evaluator.PrintExpression(simplified));
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
