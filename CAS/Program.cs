@@ -44,7 +44,10 @@ namespace CAS
                     }
                     else
                     {
-                        Console.WriteLine(Evaluator.PrintExpression(result));
+                        var rightPoly = Simplification.Polynomialize(right);
+                        var expr = left ^ rightPoly;
+
+                        Console.WriteLine(Evaluator.PrintExpression(expr));
                     }
 
                 }

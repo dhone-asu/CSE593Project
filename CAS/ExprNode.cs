@@ -17,6 +17,12 @@ namespace CAS
             Type = AtomType.Numeral
         };
 
+        public static readonly AtomNode NegativeOne = new AtomNode
+        {
+            Data = -1.0,
+            Type = AtomType.Numeral
+        };
+
         public static readonly AtomNode Zero = new AtomNode
         {
             Data = 0.0,

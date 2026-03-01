@@ -145,15 +145,31 @@ namespace CAS
             return result;
         }
 
-        /*public Polynomial ConstantPart()
+        public double ConstantPart()
         {
-        
+            double result = 0;
+
+            foreach (var term in Terms)
+            {
+                if (term.Factors.Count == 0)
+                    result += term.Coeff;
+            }
+
+            return result;
         }
 
         public Polynomial VariablePart()
         {
+            var result = new Polynomial();
 
-        }*/
+            foreach (var term in Terms)
+            {
+                if (term.Factors.Any())
+                    result.Terms.Add(term);
+            }
+
+            return result;
+        }
 
         public static Polynomial operator+(Polynomial a, Polynomial b)
         {
@@ -218,7 +234,7 @@ namespace CAS
         {
             bool recip = b < 0;
             uint powerInt = (uint)Math.Abs(b - b % 1.0);
-            double powerFrac = Math.Abs(b % 1.0);
+            double powerFrac = b % 1.0;
             AtomNode powerFracNode = new AtomNode
             {
                 Data = powerFrac,
@@ -228,15 +244,31 @@ namespace CAS
             var expansion = (a ^ powerInt).ToExpression();
             var radicalPart = a.ToExpression() ^ powerFracNode;
 
-            var result = expansion;
-
-            if (powerFrac != 0)
-                result *= radicalPart;
-
             if (recip)
-                result = ExprNode.One / result;
+            {
+                expansion ^= ExprNode.NegativeOne;
+            }
 
-            return result; 
+            if (powerFrac == 0)
+                return expansion;
+            else
+                return expansion * radicalPart;
+        }
+
+        public static ExprNode operator^(Polynomial a, Polynomial b)
+        {
+            b = Simplification.SimplifyTerms(b);
+            double constPart = b.ConstantPart();
+            Polynomial varPart = b.VariablePart();
+            ExprNode vpartResult = a.ToExpression() ^ varPart.ToExpression();
+            ExprNode cpartResult = a ^ constPart;
+
+            var result = vpartResult;
+
+            if (cpartResult != ExprNode.One)
+                result *= cpartResult;
+
+            return result;
         }
     }
 }
