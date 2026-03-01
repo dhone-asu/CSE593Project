@@ -28,9 +28,16 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                var simplified = Simplification.Simplify(result);
-                simplified = Evaluator.Evaluate(simplified);
-                Console.WriteLine(Evaluator.PrintExpression(simplified));
+                if (result is OpNode && ((OpNode)result).Operator == Operator.Mult)
+                {
+                    var left = Simplification.Polynomialize((result as OpNode).Left);
+                    var right = Simplification.Polynomialize((result as OpNode).Right);
+                    var product = left * right;
+                    var expression = product.ToExpression();
+
+                    Console.WriteLine(Evaluator.PrintExpression(expression));
+
+                }
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",

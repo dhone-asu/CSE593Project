@@ -178,7 +178,7 @@ namespace CAS
             };
         }
 
-        private static Monomial SimplifyFactors(Monomial mono)
+        public static Monomial SimplifyFactors(Monomial mono)
         {
             var variables = new List<string>();
             var baseExpressions = new List<ExprNode>();
@@ -261,7 +261,7 @@ namespace CAS
             return result;
         }
 
-        private static Polynomial SimplifyTerms(Polynomial poly)
+        public static Polynomial SimplifyTerms(Polynomial poly)
         {
             var simplified = new Polynomial();
 

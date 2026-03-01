@@ -100,6 +100,16 @@ namespace CAS
             }
             return newTerm;
         }
+
+        public static Monomial operator*(Monomial a, Monomial b)
+        {
+            var result = new Monomial();
+            result.Coeff = a.Coeff * b.Coeff;
+            result.Factors.AddRange(a.Factors);
+            result.Factors.AddRange(b.Factors);
+            result = Simplification.SimplifyFactors(result);
+            return result;
+        }
     }
 
     public class Polynomial
@@ -133,6 +143,32 @@ namespace CAS
                 }
             }
             return result;
+        }
+
+        public static Polynomial operator+(Polynomial a, Polynomial b)
+        {
+            var result = new Polynomial();
+            result.Terms.AddRange(a.Terms);
+            result.Terms.AddRange(b.Terms);
+            result = Simplification.SimplifyTerms(result);
+            return result;
+        }
+
+        public static Polynomial operator*(Polynomial a, Polynomial b)
+        {
+            var poly = new Polynomial();
+
+            foreach (var aTerm in a.Terms)
+            {
+                foreach (var bTerm in b.Terms)
+                {
+                    poly.Terms.Add(aTerm * bTerm);
+                }
+            }
+
+            poly = Simplification.SimplifyTerms(poly);
+
+            return poly;
         }
     }
 }
