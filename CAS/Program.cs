@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Xml.Schema;
 using CAS.SymbolManagement;
 
@@ -28,15 +29,37 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                if (result is OpNode && ((OpNode)result).Operator == Operator.Mult)
+                if (result is OpNode && ((OpNode)result).Operator == Operator.Pow)
+                {
+                    var left = Simplification.Polynomialize((result as OpNode).Left);
+                    var right = Simplification.Simplify((result as OpNode).Right);
+                    
+                    if (right is AtomNode && (right as AtomNode).Type == AtomType.Numeral)
+                    {
+                        double pow = (double)(right as AtomNode).Data;
+
+                        var expr = left ^ pow;
+
+                        Console.WriteLine(Evaluator.PrintExpression(expr));
+                    }
+                    else
+                    {
+                        Console.WriteLine(Evaluator.PrintExpression(result));
+                    }
+
+                }
+                else if (result is OpNode && (result as OpNode).Operator == Operator.Mult)
                 {
                     var left = Simplification.Polynomialize((result as OpNode).Left);
                     var right = Simplification.Polynomialize((result as OpNode).Right);
                     var product = left * right;
-                    var expression = product.ToExpression();
 
+                    Console.WriteLine(Evaluator.PrintExpression(product.ToExpression()));
+                }
+                else
+                {
+                    var expression = Simplification.Simplify(result);
                     Console.WriteLine(Evaluator.PrintExpression(expression));
-
                 }
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {

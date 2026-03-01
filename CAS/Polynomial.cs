@@ -145,6 +145,16 @@ namespace CAS
             return result;
         }
 
+        /*public Polynomial ConstantPart()
+        {
+        
+        }
+
+        public Polynomial VariablePart()
+        {
+
+        }*/
+
         public static Polynomial operator+(Polynomial a, Polynomial b)
         {
             var result = new Polynomial();
@@ -169,6 +179,64 @@ namespace CAS
             poly = Simplification.SimplifyTerms(poly);
 
             return poly;
+        }
+
+        public static Polynomial operator^(Polynomial a, uint b)
+        {
+            if (b == 0)
+                return new Polynomial
+                {
+                    Terms = new List<Monomial>
+                    {
+                        new Monomial
+                        {
+                            Coeff = 1
+                        }
+                    }
+                };
+
+            Polynomial poly = null;
+
+            for (int i = 0; i < b; i++)
+            {  
+                if (poly == null)
+                {
+                    poly = a;
+                }
+                else
+                {
+                    poly = poly * a;
+                }
+            }
+
+            poly = Simplification.SimplifyTerms(poly);
+
+            return poly;
+        }
+
+        public static ExprNode operator^(Polynomial a, double b)
+        {
+            bool recip = b < 0;
+            uint powerInt = (uint)Math.Abs(b - b % 1.0);
+            double powerFrac = Math.Abs(b % 1.0);
+            AtomNode powerFracNode = new AtomNode
+            {
+                Data = powerFrac,
+                Type = AtomType.Numeral
+            };
+
+            var expansion = (a ^ powerInt).ToExpression();
+            var radicalPart = a.ToExpression() ^ powerFracNode;
+
+            var result = expansion;
+
+            if (powerFrac != 0)
+                result *= radicalPart;
+
+            if (recip)
+                result = ExprNode.One / result;
+
+            return result; 
         }
     }
 }
