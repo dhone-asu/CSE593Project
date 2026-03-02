@@ -263,10 +263,7 @@ namespace CAS
             ExprNode vpartResult = a.ToExpression() ^ varPart.ToExpression();
             ExprNode cpartResult = a ^ constPart;
 
-            var result = vpartResult;
-
-            if (cpartResult != ExprNode.One)
-                result *= cpartResult;
+            var result = Simplification.Simplify(vpartResult * cpartResult);
 
             return result;
         }

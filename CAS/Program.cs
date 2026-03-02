@@ -29,7 +29,9 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                if (result is OpNode && ((OpNode)result).Operator == Operator.Pow)
+                var expanded = Expansion.Expand(result);
+                Console.WriteLine(Evaluator.PrintExpression(expanded));
+                /*if (result is OpNode && ((OpNode)result).Operator == Operator.Pow)
                 {
                     var left = Simplification.Polynomialize((result as OpNode).Left);
                     var right = Simplification.Simplify((result as OpNode).Right);
@@ -63,7 +65,7 @@ namespace CAS
                 {
                     var expression = Simplification.Simplify(result);
                     Console.WriteLine(Evaluator.PrintExpression(expression));
-                }
+                }*/
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
