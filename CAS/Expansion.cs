@@ -11,6 +11,9 @@ namespace CAS
 
         public static ExprNode Expand(ExprNode node)
         {
+            if (node is AtomNode || node is FunctionNode)
+                return node;
+
             var simplified = Simplification.Simplify(node);
             var poly = Simplification.Polynomialize(simplified);
             var newPoly = new Polynomial();
@@ -21,8 +24,8 @@ namespace CAS
 
                 foreach (var factor in term.Factors)
                 {
-                    var polyBase = Simplification.Polynomialize(factor.Base);
-                    var polyOrder = Simplification.Polynomialize(factor.Order);
+                    var polyBase = Simplification.Polynomialize(Expand(factor.Base));
+                    var polyOrder = Simplification.Polynomialize(Expand(factor.Order));
                     polyBase = Simplification.SimplifyTerms(polyBase);
                     polyOrder = Simplification.SimplifyTerms(polyOrder);
 
