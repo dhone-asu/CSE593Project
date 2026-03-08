@@ -90,13 +90,15 @@ namespace CAS
                 case '^':
                     return new Token { Type = TokenType.Pow, String = "^" };
                 case '=':
+                    return new Token { Type = TokenType.Eq, String = "=" };
+                case ':':
                     if (buffer.PeekChar() == '=')
                     {
                         buffer.GetChar();
-                        return new Token { Type = TokenType.Eq, String = "==" };
+                        return new Token { Type = TokenType.Assign, String = ":=" };
                     }
                     else
-                        return new Token { Type = TokenType.Assign, String = "=" };
+                        goto default;
                 case '(':
                     return new Token { Type = TokenType.LParen, String = "(" };
                 case ')':

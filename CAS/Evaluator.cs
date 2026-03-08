@@ -27,9 +27,9 @@ namespace CAS
             { Operator.Div, "/" },
             { Operator.Mult, "*" },
             { Operator.Pow, "^" },
-            { Operator.Eq, "=="  },
+            { Operator.Eq, "="  },
             { Operator.Neg, "-" },
-            { Operator.Assign, "=" }
+            { Operator.Assign, ":=" }
         };
 
         ExprNode tree;
