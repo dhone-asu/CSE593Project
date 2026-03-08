@@ -29,8 +29,9 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
-                var expanded = Expansion.Expand(result);
-                Console.WriteLine(Evaluator.PrintExpression(expanded));
+                //var expanded = Expansion.Expand(result);
+                var evaluated = Evaluator.Evaluate(result);
+                Console.WriteLine(Evaluator.PrintExpression(evaluated));
                 /*if (result is OpNode && ((OpNode)result).Operator == Operator.Pow)
                 {
                     var left = Simplification.Polynomialize((result as OpNode).Left);

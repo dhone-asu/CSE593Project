@@ -210,6 +210,7 @@ namespace CAS.SymbolManagement
         {
             return RunOneParamMathFunction("lambertw", ExtendedMath.LambertW, parameters);
         }
+
         public static object Exit(object[] parameters)
         {
             Environment.Exit(0);
@@ -270,6 +271,20 @@ namespace CAS.SymbolManagement
 
             var evaluator = new Evaluator(result);
             return evaluator.Evaluate();
+        }
+
+        public static object Expand(object[] parameters)
+        {
+            ExprNode expr = (ExprNode)parameters[0];
+
+            return Expansion.Expand(expr);
+        }
+
+        public static object Simplify(object[] parameters)
+        {
+            ExprNode expr = (ExprNode)parameters[0];
+
+            return Simplification.Simplify(expr);
         }
 
         public bool FunctionExists(string name)
@@ -458,6 +473,20 @@ namespace CAS.SymbolManagement
                 Delegate = Differentiate,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral },
                 ReturnType = ParamType.Numeral
+            };
+            functions["expand"] = new NativeFunction
+            {
+                Name = "expand",
+                Delegate = Expand,
+                ParameterTypes = new ParamType[] { ParamType.Expression },
+                ReturnType = ParamType.Expression
+            };
+            functions["simplify"] = new NativeFunction
+            {
+                Name = "simplify",
+                Delegate = Simplify,
+                ParameterTypes = new ParamType[] { ParamType.Expression },
+                ReturnType = ParamType.Expression
             };
         }
     }
