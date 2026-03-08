@@ -70,7 +70,7 @@ namespace CAS
                 SessionManager.Default.UserVariableManager.SetVariable("ans", new UserVariable
                 {
                     Name = "ans",
-                    Value = result
+                    Value = evaluated
                 });
                 /*if (result is AtomNode)
                     Console.WriteLine(((AtomNode)result).Data);

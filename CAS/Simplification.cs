@@ -311,6 +311,18 @@ namespace CAS
                 return expression;
             else if (expression is FunctionNode)
                 return SimplifyFunction((FunctionNode)expression);
+            else if (expression is OpNode && ((OpNode)expression).Operator == Operator.Eq)
+            {
+                var lhs = ((OpNode)expression).Left;
+                var rhs = ((OpNode)expression).Right;
+
+                return new OpNode
+                {
+                    Operator = Operator.Eq,
+                    Left = Simplify(lhs),
+                    Right = Simplify(rhs)
+                };
+            }
             else
             {
                 var poly = Polynomialize(expression);

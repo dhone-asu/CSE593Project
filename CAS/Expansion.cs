@@ -13,6 +13,19 @@ namespace CAS
         {
             if (node is AtomNode || node is FunctionNode)
                 return node;
+            else if (node is OpNode && ((OpNode)node).Operator == Operator.Eq)
+            {
+                var opNode = (OpNode)node;
+                var lhs = opNode.Left;
+                var rhs = opNode.Right;
+
+                return new OpNode
+                {
+                    Operator = Operator.Eq,
+                    Left = Expand(lhs),
+                    Right = Expand(rhs)
+                };
+            }
 
             var simplified = Simplification.Simplify(node);
             var poly = Simplification.Polynomialize(simplified);

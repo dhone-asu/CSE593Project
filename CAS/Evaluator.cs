@@ -196,6 +196,19 @@ namespace CAS
                 Assign(node.Left, node.Right);
                 return tree;
             }
+            /*else if ((tree is OpNode) && ((OpNode)tree).Operator == Operator.Eq)
+            {
+                OpNode node = (OpNode)tree;
+                var lhs = node.Left;
+                var rhs = node.Right;
+
+                return new OpNode
+                {
+                    Operator = Operator.Eq,
+                    Left = Evaluate(lhs),
+                    Right = Evaluate(rhs)
+                };
+            }*/
             else
             {
                 return EvaluateNode(tree);
