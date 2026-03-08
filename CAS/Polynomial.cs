@@ -110,6 +110,15 @@ namespace CAS
             result = Simplification.SimplifyFactors(result);
             return result;
         }
+
+        public static Monomial operator-(Monomial mono)
+        {
+            var result = new Monomial();
+            result.Coeff = -mono.Coeff;
+            result.Factors.AddRange(mono.Factors);
+
+            return result;
+        }
     }
 
     public class Polynomial
@@ -267,6 +276,23 @@ namespace CAS
             var result = vpartResult * cpartResult;
 
             return result;
+        }
+
+        public static Polynomial operator-(Polynomial poly)
+        {
+            var newPoly = new Polynomial();
+
+            foreach (var term in poly.Terms)
+            {
+                newPoly.Terms.Add(-term);
+            }
+
+            return newPoly;
+        }
+
+        public static Polynomial operator-(Polynomial a, Polynomial b)
+        {
+            return a + -b;
         }
     }
 }

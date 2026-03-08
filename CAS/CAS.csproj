@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Equation.cs" />
     <Compile Include="Expansion.cs" />
     <Compile Include="Polynomial.cs" />
     <Compile Include="SessionManager.cs" />
