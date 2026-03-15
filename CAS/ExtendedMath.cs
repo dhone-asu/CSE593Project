@@ -63,6 +63,8 @@ namespace CAS
         {
             if (x < -Math.Exp(-1))
                 return double.NaN;
+            else if (Math.Abs(x + Math.Exp(-1)) <= 1E-10)
+                return -1;
             double w = 1.0;
 
             while (true)
