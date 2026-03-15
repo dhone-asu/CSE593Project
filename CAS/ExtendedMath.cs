@@ -94,7 +94,7 @@ namespace CAS
         {
             double delta = 1e-8;
 
-            return (function(a + delta) - function(a - delta)) / (2 * delta);
+            return (function(a + delta) - function(a)) /  delta;
         }
 
 
@@ -132,11 +132,11 @@ namespace CAS
                 throw new Exception("Point must be numeric");
             double delta = 1e-8;
             AtomNode plusdelta = new AtomNode { Data = (double)a.Data + delta, Type = AtomType.Numeral };
-            AtomNode minusdelta = new AtomNode { Data = (double)a.Data - delta, Type = AtomType.Numeral };
+            AtomNode atA = new AtomNode { Data = (double)a.Data, Type = AtomType.Numeral };
 
             AtomNode f1 = (AtomNode)function.Call(new[] { plusdelta });
-            AtomNode f2 = (AtomNode)function.Call(new[] { minusdelta });
-            double result = ((double)f1.Data - (double)f2.Data) / (2 * delta);
+            AtomNode f2 = (AtomNode)function.Call(new[] { atA });
+            double result = ((double)f1.Data - (double)f2.Data) / delta;
             return new AtomNode { Data = result, Type = AtomType.Numeral };
         }
 
