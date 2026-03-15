@@ -56,7 +56,7 @@ namespace CAS
 
         private static double NextW(double w, double x)
         {
-            return w - (w*Math.Exp(w) - x)/((1+w)*Math.Exp(w));
+            return (w * w + x * Math.Exp(-w)) / (w + 1);
         }
 
         public static double LambertW(double x)
