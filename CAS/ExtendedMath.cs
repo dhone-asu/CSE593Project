@@ -97,6 +97,16 @@ namespace CAS
             return (function(a + delta) - function(a)) /  delta;
         }
 
+        private static double CallFunction(IFunction function, double a)
+        {
+            AtomNode aNode = new AtomNode
+            {
+                Type = AtomType.Numeral,
+                Data = a
+            };
+            AtomNode resultNode = (AtomNode)function.Call(new object[] { aNode });
+            return (double)resultNode.Data;
+        }
 
         public static ExprNode Integrate(IFunction function, AtomNode a, AtomNode b)
         {
@@ -104,19 +114,17 @@ namespace CAS
                 throw new Exception("Limits must be numeric");
             double lowerLim = (double)a.Data;
             double upperLim = (double)b.Data;
-            double n = 1e7;
+            double n = 1e6;
             double delta = (upperLim - lowerLim)/n;
             double result = 0;
 
-            for (double x = lowerLim; x <= upperLim; x += delta)
+            for (double x = lowerLim; x < upperLim; x += delta)
             {
-                AtomNode xNode = new AtomNode
-                {
-                    Type = AtomType.Numeral,
-                    Data = x,
-                };
-                AtomNode yNode = (AtomNode)function.Call(new object[] { xNode });
-                result += (double)yNode.Data * delta;
+                double h = delta / 2;
+                double f1 = CallFunction(function, x);
+                double f2 = CallFunction(function, x+h);
+                double f3 = CallFunction(function, x+2*h);
+                result += h / 3 * (f1 + 4 * f2 + f3);
             }
 
             return new AtomNode
@@ -138,6 +146,12 @@ namespace CAS
             AtomNode f2 = (AtomNode)function.Call(new[] { atA });
             double result = ((double)f1.Data - (double)f2.Data) / delta;
             return new AtomNode { Data = result, Type = AtomType.Numeral };
+        }
+
+        public static double Solve(Func<double,double> function)
+        {
+
+            return 0;
         }
 
         private static double LogGammaBaseFormula(double x)
