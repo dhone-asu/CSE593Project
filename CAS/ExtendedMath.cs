@@ -121,6 +121,11 @@ namespace CAS
             for (double x = lowerLim; x < upperLim; x += delta)
             {
                 double h = delta / 2;
+                if (x + 2 * h > upperLim)
+                {
+                    h = (upperLim - x) / 2;
+                }
+
                 double f1 = CallFunction(function, x);
                 double f2 = CallFunction(function, x+h);
                 double f3 = CallFunction(function, x+2*h);
