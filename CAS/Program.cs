@@ -30,7 +30,7 @@ namespace CAS
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
                 //var expanded = Expansion.Expand(result);
-                var evaluated = Evaluator.Evaluate(result);
+                var evaluated = Simplification.Resolve(result);
                 Console.WriteLine(Evaluator.PrintExpression(evaluated));
                 /*if (result is OpNode && ((OpNode)result).Operator == Operator.Pow)
                 {

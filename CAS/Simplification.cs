@@ -331,5 +331,10 @@ namespace CAS
                 return result.ToExpression();
             }
         }
+
+        public static ExprNode Resolve(ExprNode expression)
+        {
+            return Simplify(Evaluator.Evaluate(expression));
+        }
     }
 }

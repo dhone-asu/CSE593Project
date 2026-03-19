@@ -15,9 +15,11 @@ namespace CAS.SymbolManagement
     {
         public static ParamType GetValueType(ExprNode tree)
         {
-            if (tree is AtomNode)
+            var evaluated = Simplification.Resolve(tree);
+
+            if (evaluated is AtomNode)
             {
-                AtomNode atom = (AtomNode)tree;
+                AtomNode atom = (AtomNode)evaluated;
 
                 if (atom.Type == AtomType.Numeral)
                     return ParamType.Numeral;
@@ -221,8 +223,10 @@ namespace CAS.SymbolManagement
         {
             var expr = (ExprNode)parameters[0];
             var variable = (AtomNode)parameters[1];
-            var a = (AtomNode)parameters[2];
-            var b = (AtomNode)parameters[3];
+            var aExpr = (ExprNode)parameters[2];
+            var bExpr = (ExprNode)parameters[3];
+            var a = (AtomNode)Simplification.Simplify(Evaluator.Evaluate(aExpr));
+            var b = (AtomNode)Simplification.Simplify(Evaluator.Evaluate(bExpr));
             var function = new UserFunction
             {
                 Expression = expr,
