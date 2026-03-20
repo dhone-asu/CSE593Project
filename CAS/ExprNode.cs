@@ -34,14 +34,20 @@ namespace CAS
             var logx = new FunctionNode
             {
                 Name = "log",
-                Params = new List<ExprNode> { variable.Clone() }
-            }
+                Params = new List<ExprNode> { (ExprNode)variable.Clone() }
+            };
             var result = new OpNode
             {
                 Operator = Operator.Plus,
                 Left = logx,
                 Right = One
-            }
+            };
+            return result;
+        }
+
+        public virtual List<string> GetVariableNames()
+        {
+            return new List<string>();
         }
 
         public virtual object Clone()
@@ -165,6 +171,15 @@ namespace CAS
             else
                 return false;
         }
+
+        public override List<string> GetVariableNames()
+        {
+            var list = Left.GetVariableNames();
+            var rightList = Right.GetVariableNames();
+
+            list.AddRange(rightList);
+            return list;
+        }
     }
 
     public class FunctionNode : ExprNode
@@ -207,6 +222,19 @@ namespace CAS
             }
             else return false;
         }
+
+        public override List<string> GetVariableNames()
+        {
+            var list = new List<string>();
+
+            foreach (var item in Params)
+            {
+                var paramList = item.GetVariableNames();
+                list.AddRange(paramList);
+            }
+
+            return list;
+        }
     }
 
     public class AtomNode : ExprNode
@@ -237,6 +265,18 @@ namespace CAS
                     return ((string)Data) == ((string)node.Data); 
             }
             else return false;
+        }
+
+        public override List<string> GetVariableNames()
+        {
+            var list = new List<string>();
+
+            if (Type == AtomType.Identifier)
+            {
+                list.Add((string)Data);
+            }
+
+            return list;
         }
     }
 }

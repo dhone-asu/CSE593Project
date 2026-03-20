@@ -35,6 +35,13 @@ namespace CAS
             return factor;
         }
 
+        public List<string> GetVariableNames()
+        {
+            var list = new List<string>();
+
+            return list;
+        }
+
         public Monomial Derivative(ExprNode variable)
         {
             if (Base == variable && Order == variable)
@@ -43,22 +50,22 @@ namespace CAS
                 var coeff = ExprNode.LogXp1(variable);
                 var expr = new MonomialFactor
                 {
-                    Base = variable.Clone(),
-                    Order = variable.Clone()
-                }
-                mono.Factors.Add(coeff);
-                mono.Factors.Add(expr);
+                    Base = (ExprNode)variable.Clone(),
+                    Order = (ExprNode)variable.Clone()
+                };
+                return null;
             }
             else if (Base == variable)
             {
                 var mono = new Monomial { Coeff = 1 };
                 var coeff = new MonomialFactor
                 {
-                    Base = Order.Clone(),
+                    Base = (ExprNode)Order.Clone(),
                     Order = ExprNode.One
-                }
+                };
                 mono.Factors.Add(coeff);
                 Order = Simplification.Resolve(Order - ExprNode.One);
+                return null;
             }
             else if (Order == variable)
             {
@@ -66,13 +73,14 @@ namespace CAS
                 var coeff = new FunctionNode
                 {
                     Name = "log",
-                    Params = new List<ExprNode> { Base.Clone() }
+                    Params = new List<ExprNode> { (ExprNode)Base.Clone() }
                 };
                 var expr = new MonomialFactor
                 {
-                    Base = Base.Clone(),
-                    Order = Order.Clone()
+                    Base = (ExprNode)Base.Clone(),
+                    Order = (ExprNode)Order.Clone()
                 };
+                return null;
             }
             else
             {
