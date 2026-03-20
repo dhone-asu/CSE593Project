@@ -15,6 +15,9 @@ namespace CAS
         public static readonly MonomialFactor One = 
             new MonomialFactor { Base = ExprNode.One, Order = ExprNode.One };
 
+        public static readonly MonomialFactor Zero =
+            new MonomialFactor { Base = ExprNode.Zero, Order = ExprNode.One };
+
         public bool Equals(MonomialFactor a)
         {
             return Base == a.Base && Order == a.Order;
@@ -30,6 +33,52 @@ namespace CAS
                 factor = Base ^ Order;
 
             return factor;
+        }
+
+        public Monomial Derivative(ExprNode variable)
+        {
+            if (Base == variable && Order == variable)
+            {
+                var mono = new Monomial { Coeff = 1 };
+                var coeff = ExprNode.LogXp1(variable);
+                var expr = new MonomialFactor
+                {
+                    Base = variable.Clone(),
+                    Order = variable.Clone()
+                }
+                mono.Factors.Add(coeff);
+                mono.Factors.Add(expr);
+            }
+            else if (Base == variable)
+            {
+                var mono = new Monomial { Coeff = 1 };
+                var coeff = new MonomialFactor
+                {
+                    Base = Order.Clone(),
+                    Order = ExprNode.One
+                }
+                mono.Factors.Add(coeff);
+                Order = Simplification.Resolve(Order - ExprNode.One);
+            }
+            else if (Order == variable)
+            {
+                var mono = new Monomial { Coeff = 1 };
+                var coeff = new FunctionNode
+                {
+                    Name = "log",
+                    Params = new List<ExprNode> { Base.Clone() }
+                };
+                var expr = new MonomialFactor
+                {
+                    Base = Base.Clone(),
+                    Order = Order.Clone()
+                };
+            }
+            else
+            {
+                var mono = new Monomial { Coeff = 0 };
+                return mono;
+            }
         }
 
         public static MonomialFactor operator *(MonomialFactor a, MonomialFactor b)
