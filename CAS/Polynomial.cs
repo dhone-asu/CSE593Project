@@ -38,6 +38,8 @@ namespace CAS
         public List<string> GetVariableNames()
         {
             var list = new List<string>();
+            list.AddRange(Base.GetVariableNames());
+            list.AddRange(Order.GetVariableNames());
 
             return list;
         }
@@ -158,6 +160,18 @@ namespace CAS
             return newTerm;
         }
 
+        public List<string> GetVariableNames()
+        {
+            var list = new List<string>();
+
+            foreach (var factor in Factors)
+            {
+                list.AddRange(factor.GetVariableNames());
+            }
+
+            return list;
+        }
+
         public static Monomial operator*(Monomial a, Monomial b)
         {
             var result = new Monomial();
@@ -209,6 +223,18 @@ namespace CAS
                 }
             }
             return result;
+        }
+
+        public List<string> GetVariableNames()
+        {
+            var list = new List<string>();
+
+            foreach (var term in Terms)
+            {
+                list.AddRange(term.GetVariableNames());
+            }
+
+            return list;
         }
 
         public double ConstantPart()
