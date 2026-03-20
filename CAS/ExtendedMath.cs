@@ -11,6 +11,9 @@ namespace CAS
     public class ExtendedMath
     {
         public const double EulerMascheroni = 0.57721566490153286060651209;
+        private const double DerivativeDelta = 1e-8;
+        private const double IntegralN = 1e6;
+        private const double IntegralInf = 1e4;
         public static double Frac(double a)
         {
             return a % 1.0;
@@ -78,7 +81,7 @@ namespace CAS
 
         public static double Integrate(Func<double,double> function, double a, double b)
         {
-            double n = 1e8;
+            double n = IntegralN;
             double delta = (b - a) / n;
             double result = 0;
 
@@ -92,7 +95,7 @@ namespace CAS
 
         public static double Differentiate(Func<double, double> function, double a)
         {
-            double delta = 1e-8;
+            double delta = DerivativeDelta;
 
             return (function(a + delta) - function(a)) /  delta;
         }
@@ -114,7 +117,13 @@ namespace CAS
                 throw new Exception("Limits must be numeric");
             double lowerLim = (double)a.Data;
             double upperLim = (double)b.Data;
-            double n = 1e6;
+
+            if (double.IsInfinity(upperLim))
+                upperLim = Math.Sign(upperLim) * IntegralInf;
+            if (double.IsInfinity(lowerLim))
+                lowerLim = Math.Sign(lowerLim) * IntegralInf;
+
+            double n = IntegralN;
             double delta = (upperLim - lowerLim)/n;
             double result = 0;
 
@@ -143,7 +152,7 @@ namespace CAS
         {
             if (a.Type != AtomType.Numeral)
                 throw new Exception("Point must be numeric");
-            double delta = 1e-8;
+            double delta = DerivativeDelta;
             AtomNode plusdelta = new AtomNode { Data = (double)a.Data + delta, Type = AtomType.Numeral };
             AtomNode atA = new AtomNode { Data = (double)a.Data, Type = AtomType.Numeral };
 
