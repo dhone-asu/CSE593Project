@@ -88,8 +88,21 @@ namespace CAS
             // d/dx (f(x))^n = f'(x)*n*(f(x))^(n-1)
             else
             {
-                var basePoly = Simplification.Polynomialize(Base);
-                var baseDeriv = basePoly.Derivative(variable);
+                //var basePoly = Simplification.Polynomialize(Base);
+                //var baseDeriv = basePoly.Derivative(variable);
+                Polynomial baseDeriv;
+
+                if (Base is FunctionNode)
+                {
+                    var baseDerivExpr = ((FunctionNode)Base).Derivative(variable);
+                    baseDeriv = Simplification.Polynomialize(baseDerivExpr);
+                }
+                else
+                {
+                    var basePoly = Simplification.Polynomialize(Base);
+                    baseDeriv = basePoly.Derivative(variable);
+                }
+
                 var fprime = new MonomialFactor
                 {
                     Base = baseDeriv.ToExpression(),
@@ -135,8 +148,19 @@ namespace CAS
             // d/dx a^f(x) = f'(x)*a^f(x)*log(a)
             else
             {
-                var orderPoly = Simplification.Polynomialize(Order);
-                var orderDeriv = orderPoly.Derivative(variable);
+                Polynomial orderDeriv;
+
+                if (Order is FunctionNode)
+                {
+                    var derivExpr = ((FunctionNode)Order).Derivative(variable);
+                    orderDeriv = Simplification.Polynomialize(derivExpr);
+                }
+                else
+                {
+                    var orderPoly = Simplification.Polynomialize(Order);
+                    orderDeriv = orderPoly.Derivative(variable);
+                }
+            
                 var orderDerivFactor = new MonomialFactor
                 {
                     Base = orderDeriv.ToExpression(),
@@ -148,7 +172,8 @@ namespace CAS
                     {
                         Name = "log",
                         Params = { Base }
-                    }
+                    },
+                    Order = ExprNode.One
                 };
                 var mono = new Monomial { Coeff = 1 };
                 mono.Factors.Add(orderDerivFactor);
@@ -191,10 +216,32 @@ namespace CAS
             // d/dx (f(x))^g(x) = (g'(x)*log(f(x)) + f'(x)*g(x)/f(x))*(f(x))^g(x)
             else
             {
-                var basePoly = Simplification.Polynomialize(Base);
-                var orderPoly = Simplification.Polynomialize(Order);
-                var baseDeriv = basePoly.Derivative(variable);
-                var orderDeriv = orderPoly.Derivative(variable);
+                Polynomial baseDeriv;
+                Polynomial orderDeriv;
+
+                if (Base is FunctionNode)
+                {
+                    var derivExpr = ((FunctionNode)Base).Derivative(variable);
+                    baseDeriv = Simplification.Polynomialize(derivExpr);
+                }
+                else
+                {
+                    var basePoly = Simplification.Polynomialize(Base);
+                    baseDeriv = basePoly.Derivative(variable);
+                }
+
+                if (Order is FunctionNode)
+                {
+                    var derivExpr = ((FunctionNode)Order).Derivative(variable);
+                    orderDeriv = Simplification.Polynomialize(derivExpr);
+                }
+                else
+                {
+                    var orderPoly = Simplification.Polynomialize(Order);
+                    orderDeriv = orderPoly.Derivative(variable);
+                }
+
+
                 var coeffExpr = new OpNode
                 {
                     Operator = Operator.Plus,

@@ -30,11 +30,11 @@ namespace CAS
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
 
-                //var poly = Simplification.Polynomialize(result);
-                //var derivPoly = poly.Derivative("x");
-                //var deriv = derivPoly.ToExpression();
+                var poly = Simplification.Polynomialize(result);
+                var derivPoly = poly.Derivative("x");
+                var deriv = derivPoly.ToExpression();
 
-                //Console.WriteLine($"d/dx = {Evaluator.PrintExpression(deriv)}");
+                Console.WriteLine($"d/dx = {Evaluator.PrintExpression(deriv)}");
 
                 var evaluated = Simplification.Resolve(result);
                 Console.WriteLine(Evaluator.PrintExpression(evaluated));
