@@ -206,10 +206,14 @@ namespace CAS
                     double value = Math.Pow(baseVal, orderVal);
                     result.Coeff *= value;
                 }
-                /*else if (factor.Order == ExprNode.Zero)
+                else if (factor.Order == ExprNode.Zero)
                 {
-                    result = new Monomial { Coeff = 1.0 };
-                }*/
+                    result.Factors.Add(new MonomialFactor
+                    {
+                        Base = ExprNode.One,
+                        Order = ExprNode.One
+                    });
+                }
                 else
                 {
                     if (!baseExpressions.Contains(factor.Base))
