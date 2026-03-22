@@ -490,7 +490,8 @@ namespace CAS.SymbolManagement
                 Name = "lambertw",
                 Delegate = LambertW,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                DerivativeExpression = "lambertw(x)/(x*(1+lambertw(x)))"
             };
 
             functions["exit"] = new NativeFunction
