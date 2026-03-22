@@ -166,14 +166,71 @@ namespace CAS
             if (Base is AtomNode && ((AtomNode)Base).Type == AtomType.Identifier &&
                 Order is AtomNode && ((AtomNode)Order).Type == AtomType.Identifier)
             {
+                var logxp1 = new MonomialFactor
+                {
+                    Base = new OpNode
+                    {
+                        Operator = Operator.Plus,
+                        Left = new FunctionNode
+                        {
+                            Name = "log",
+                            Params = { Base }
+                        },
+                        Right = ExprNode.One
+                    },
+                    Order = ExprNode.One
+                };
+                var mono = new Monomial
+                {
+                    Coeff = 1,
+                    Factors = { this, logxp1 }
+                };
 
+                return mono;
             }
             // d/dx (f(x))^g(x) = (g'(x)*log(f(x)) + f'(x)*g(x)/f(x))*(f(x))^g(x)
             else
             {
+                var basePoly = Simplification.Polynomialize(Base);
+                var orderPoly = Simplification.Polynomialize(Order);
+                var baseDeriv = basePoly.Derivative(variable);
+                var orderDeriv = orderPoly.Derivative(variable);
+                var coeffExpr = new OpNode
+                {
+                    Operator = Operator.Plus,
+                    Left = new OpNode
+                    {
+                        Operator = Operator.Mult,
+                        Left = orderDeriv.ToExpression(),
+                        Right = new FunctionNode
+                        {
+                            Name = "log",
+                            Params = { Base }
+                        }
+                    },
+                    Right = new OpNode
+                    {
+                        Operator = Operator.Div,
+                        Left = new OpNode
+                        {
+                            Operator = Operator.Mult,
+                            Left = baseDeriv.ToExpression(),
+                            Right = Order
+                        },
+                        Right = Base
+                    }
+                };
+                var coeff = new MonomialFactor
+                {
+                    Base = coeffExpr,
+                    Order = ExprNode.One
+                };
+                var mono = new Monomial { Coeff = 1 };
+                mono.Factors.Add(coeff);
+                mono.Factors.Add(this);
 
+                return Simplification.SimplifyFactors(mono);
             }
-            return null;
         }
 
         public static MonomialFactor operator *(MonomialFactor a, MonomialFactor b)
