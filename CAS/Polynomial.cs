@@ -256,6 +256,15 @@ namespace CAS
 
             return list;
         }
+        
+        public Polynomial ToPolynomial()
+        {
+            var poly = new Polynomial
+            {
+                Terms = { this }
+            };
+            return poly;
+        }
 
         public Polynomial Derivative(string variable)
         {
@@ -265,9 +274,11 @@ namespace CAS
             {
                 var mono = new Monomial { Coeff = 1 };
 
+                var factorDerivPoly = Factors[i].Derivative(variable).ToPolynomial();
+
                 var factorderiv = new MonomialFactor
                 {
-                    Base = Factors[i].Derivative(variable).ToExpression(),
+                    Base = factorDerivPoly.ToExpression(),
                     Order = ExprNode.One
                 };
 

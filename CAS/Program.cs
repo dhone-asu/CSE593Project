@@ -31,7 +31,8 @@ namespace CAS
                 var result = parser.ParseInput();
 
                 var poly = Simplification.Polynomialize(result);
-                var deriv = poly.Derivative("x").ToExpression();
+                var derivPoly = poly.Derivative("x");
+                var deriv = derivPoly.ToExpression();
 
                 Console.WriteLine($"deriv = {Evaluator.PrintExpression(deriv)}");
 
