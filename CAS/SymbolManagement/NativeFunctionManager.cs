@@ -77,6 +77,33 @@ namespace CAS.SymbolManagement
                 throw new ParameterException("Parameter mismatch");
             }
         }
+
+        public ExprNode Derivative(FunctionNode expr, string variable)
+        {
+            if (DerivativeExpression != null)
+            {
+                var deriv = Parser.Parse(DerivativeExpression);
+                deriv = Evaluator.Substitute(deriv, variable, expr.Params[0]);
+                var paramPoly = Simplification.Polynomialize(expr.Params[0]);
+                var paramDeriv = paramPoly.Derivative(variable);
+                var simplified = Simplification.Simplify(deriv * paramDeriv.ToExpression());
+                return simplified;
+            }
+            else
+                return new FunctionNode
+                {
+                    Name = "deriv",
+                    Params =
+                    {
+                        expr,
+                        new AtomNode
+                        {
+                            Type = AtomType.Identifier,
+                            Data = variable
+                        }
+                    }
+                };
+        }
     }
     public class NativeFunctionManager : IFunctionManager
     {

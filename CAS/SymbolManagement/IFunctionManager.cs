@@ -18,6 +18,7 @@ namespace CAS.SymbolManagement
         ParamType[] ParameterTypes {  get; set; }
         bool CheckParameterTypes(object[] parameters);
         object Call(object[] parameters);
+        ExprNode Derivative(FunctionNode expr, string variable);
     }
 
     public interface IFunctionManager

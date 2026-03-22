@@ -51,6 +51,13 @@ namespace CAS.SymbolManagement
             var afterEval = Evaluator.Evaluate(afterSubst);
             return afterEval;
         }
+
+        public ExprNode Derivative(FunctionNode expr, string variable)
+        {
+            var poly = Simplification.Polynomialize(Expression);
+            var deriv = poly.Derivative(variable);
+            return deriv.ToExpression();
+        }
     }
     public class UserFunctionManager: IFunctionManager
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CAS.SymbolManagement;
 
 namespace CAS
 {
@@ -223,19 +224,25 @@ namespace CAS
 
         public ExprNode Derivative(string variable)
         {
-            return new FunctionNode
+            if (SessionManager.Default.FunctionExists(Name))
             {
-                Name = "deriv",
-                Params =
+                IFunction function = SessionManager.Default.GetFunction(Name);
+                return function.Derivative(this,variable);
+            }
+            else
+                return new FunctionNode
                 {
-                    this,
-                    new AtomNode
+                    Name = "deriv",
+                    Params =
                     {
-                        Type = AtomType.Identifier,
-                        Data = variable
+                        this,
+                        new AtomNode
+                        {
+                            Type = AtomType.Identifier,
+                            Data = variable
+                        }
                     }
-                }
-            };
+                };
         }
     }
 
