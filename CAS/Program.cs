@@ -25,10 +25,11 @@ namespace CAS
                 last = line;
                 //Evaluator evaluator = new Evaluator(line);
                 //var result = evaluator.Evaluate();
-                StringBuffer sb = new StringBuffer(line);
+                /*StringBuffer sb = new StringBuffer(line);
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
-                var result = parser.ParseInput();
+                var result = parser.ParseInput();*/
+                var result = Parser.Parse(line);
 
                 var poly = Simplification.Polynomialize(result);
                 var derivPoly = poly.Derivative("x");

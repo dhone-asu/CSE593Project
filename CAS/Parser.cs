@@ -234,6 +234,16 @@ namespace CAS
             }
 
         }
+
+        public static ExprNode Parse(string expression)
+        {
+            StringBuffer sb = new StringBuffer(expression);
+            var tok = new Tokenizer(sb);
+            var parser = new Parser(tok);
+            var result = parser.ParseInput();
+
+            return result;
+        }
     }
 
     public class ParserException : Exception
