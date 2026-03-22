@@ -65,8 +65,6 @@ namespace CAS
                 };
         }
 
-
-        // d/dx (f(x))^n = f'(x)*n*(f(x))^(n-1)
         private Monomial PowerRuleDeriv(string variable)
         {
             // d/dx (x^n) = n*x^(n-1)
@@ -87,6 +85,7 @@ namespace CAS
                 mono.Factors.Add(expr);
                 return Simplification.SimplifyFactors(mono);
             }
+            // d/dx (f(x))^n = f'(x)*n*(f(x))^(n-1)
             else
             {
                 var basePoly = Simplification.Polynomialize(Base);
@@ -114,15 +113,66 @@ namespace CAS
             }
         }
 
-        // a^f(x) = f'(x)*a^f(x)*ln(a)
         private Monomial ExpRuleDeriv(string variable)
         {
-            return null;
+            // d/dx a^x = a^x*log(a)
+            if (Order is AtomNode && ((AtomNode)Order).Type == AtomType.Identifier)
+            {
+                var logBase = new MonomialFactor
+                {
+                    Base = new FunctionNode
+                    {
+                        Name = "log",
+                        Params = { Base }
+                    },
+                    Order = ExprNode.One
+                };
+                var mono = new Monomial { Coeff = 1 };
+                mono.Factors.Add(this);
+                mono.Factors.Add(logBase);
+                return Simplification.SimplifyFactors(mono);
+            }
+            // d/dx a^f(x) = f'(x)*a^f(x)*log(a)
+            else
+            {
+                var orderPoly = Simplification.Polynomialize(Order);
+                var orderDeriv = orderPoly.Derivative(variable);
+                var orderDerivFactor = new MonomialFactor
+                {
+                    Base = orderDeriv.ToExpression(),
+                    Order = ExprNode.One
+                };
+                var logBase = new MonomialFactor
+                {
+                    Base = new FunctionNode
+                    {
+                        Name = "log",
+                        Params = { Base }
+                    }
+                };
+                var mono = new Monomial { Coeff = 1 };
+                mono.Factors.Add(orderDerivFactor);
+                mono.Factors.Add(this);
+                mono.Factors.Add(logBase);
+
+                return Simplification.SimplifyFactors(mono);
+            }
         }
 
-        // (f(x))^g(x) = (g'(x)*ln(f(x)) + f'(x)*g(x)/f(x))*(f(x))^g(x)
+
         private Monomial MixedRuleDeriv(string variable)
         {
+            // d/dx x^x = x^x*(log(x) + 1)
+            if (Base is AtomNode && ((AtomNode)Base).Type == AtomType.Identifier &&
+                Order is AtomNode && ((AtomNode)Order).Type == AtomType.Identifier)
+            {
+
+            }
+            // d/dx (f(x))^g(x) = (g'(x)*log(f(x)) + f'(x)*g(x)/f(x))*(f(x))^g(x)
+            else
+            {
+
+            }
             return null;
         }
 

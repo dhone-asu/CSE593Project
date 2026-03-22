@@ -159,9 +159,10 @@ namespace CAS
         public override List<string> GetVariableNames()
         {
             var list = Left.GetVariableNames();
-            var rightList = Right.GetVariableNames();
+            var rightList = Right?.GetVariableNames();
 
-            list.AddRange(rightList);
+            if (rightList != null)
+                list.AddRange(rightList);
             return list;
         }
     }
