@@ -31,6 +31,7 @@ namespace CAS.SymbolManagement
         }
         public string Name { get; set; }
         public GenericFunction Delegate { get; set; }
+        public string Derivative { get; set; }
         public ParamType ReturnType { get; set; }
         public ParamType[] ParameterTypes { get; set; }
 
@@ -309,84 +310,96 @@ namespace CAS.SymbolManagement
                 Name = "sin",
                 Delegate = Sin,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "cos(x)"
             };
             functions["cos"] = new NativeFunction
             {
                 Name = "cos",
                 Delegate = Cos,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "-sin(x)"
             };
             functions["tan"] = new NativeFunction
             {
                 Name = "tan",
                 Delegate = Tan,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/(cos(x))^2"
             };
             functions["asin"] = new NativeFunction
             {
                 Name = "asin",
                 Delegate = Asin,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/sqrt(1-x^2)"
             };
             functions["acos"] = new NativeFunction
             {
                 Name = "acos",
                 Delegate = Acos,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "-1/sqrt(1-x^2)"
             };
             functions["atan"] = new NativeFunction
             {
                 Name = "atan",
                 Delegate = Atan,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/(1+x^2)"
             };
             functions["sinh"] = new NativeFunction
             {
                 Name = "sinh",
                 Delegate = Sinh,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "cosh(x)"
             };
             functions["cosh"] = new NativeFunction
             {
                 Name = "cosh",
                 Delegate = Cosh,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "sinh(x)"
             };
             functions["tanh"] = new NativeFunction
             {
                 Name = "tanh",
                 Delegate = Tanh,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/(cosh(x))^2"
             };
             functions["asinh"] = new NativeFunction
             {
                 Name = "asinh",
                 Delegate = Asinh,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/sqrt(1+x^2)"
             };
             functions["acosh"] = new NativeFunction
             {
                 Name = "acosh",
                 Delegate = Acosh,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/sqrt(x^2-1)"
             };
             functions["atanh"] = new NativeFunction
             {
                 Name = "atanh",
                 Delegate = Atanh,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/(1-x^2)"
             };
             functions["pow"] = new NativeFunction
             {
@@ -400,28 +413,32 @@ namespace CAS.SymbolManagement
                 Name = "exp",
                 Delegate = Exp,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "exp(x)"
             };
             functions["log"] = new NativeFunction
             {
                 Name = "log",
                 Delegate = Log,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/x"
             };
             functions["ln"] = new NativeFunction
             {
                 Name = "ln",
                 Delegate = Log,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/x"
             };
             functions["sqrt"] = new NativeFunction
             {
                 Name = "sqrt",
                 Delegate = Sqrt,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "1/(2*sqrt(x))"
             };
 
             functions["fact"] = new NativeFunction
@@ -429,7 +446,8 @@ namespace CAS.SymbolManagement
                 Name = "fact",
                 Delegate = Fact,
                 ParameterTypes = new ParamType[] { ParamType.Expression },
-                ReturnType = ParamType.Expression
+                ReturnType = ParamType.Expression,
+                Derivative = "digamma(x+1)*fact(x)"
             };
 
             functions["mod"] = new NativeFunction
