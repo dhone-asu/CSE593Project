@@ -220,6 +220,23 @@ namespace CAS
 
             return list;
         }
+
+        public ExprNode Derivative(string variable)
+        {
+            return new FunctionNode
+            {
+                Name = "deriv",
+                Params =
+                {
+                    this,
+                    new AtomNode
+                    {
+                        Type = AtomType.Identifier,
+                        Data = variable
+                    }
+                }
+            };
+        }
     }
 
     public class AtomNode : ExprNode
