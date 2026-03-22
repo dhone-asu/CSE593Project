@@ -29,22 +29,6 @@ namespace CAS
             Type = AtomType.Numeral
         };
 
-        public static OpNode LogXp1(ExprNode variable) // coefficient for derivative of x^x
-        {
-            var logx = new FunctionNode
-            {
-                Name = "log",
-                Params = new List<ExprNode> { (ExprNode)variable.Clone() }
-            };
-            var result = new OpNode
-            {
-                Operator = Operator.Plus,
-                Left = logx,
-                Right = One
-            };
-            return result;
-        }
-
         public virtual List<string> GetVariableNames()
         {
             return new List<string>();

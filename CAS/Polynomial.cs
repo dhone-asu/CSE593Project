@@ -46,49 +46,7 @@ namespace CAS
 
         public Monomial Derivative(ExprNode variable)
         {
-            if (Base == variable && Order == variable)
-            {
-                var mono = new Monomial { Coeff = 1 };
-                var coeff = ExprNode.LogXp1(variable);
-                var expr = new MonomialFactor
-                {
-                    Base = (ExprNode)variable.Clone(),
-                    Order = (ExprNode)variable.Clone()
-                };
-                return null;
-            }
-            else if (Base == variable)
-            {
-                var mono = new Monomial { Coeff = 1 };
-                var coeff = new MonomialFactor
-                {
-                    Base = (ExprNode)Order.Clone(),
-                    Order = ExprNode.One
-                };
-                mono.Factors.Add(coeff);
-                Order = Simplification.Resolve(Order - ExprNode.One);
-                return null;
-            }
-            else if (Order == variable)
-            {
-                var mono = new Monomial { Coeff = 1 };
-                var coeff = new FunctionNode
-                {
-                    Name = "log",
-                    Params = new List<ExprNode> { (ExprNode)Base.Clone() }
-                };
-                var expr = new MonomialFactor
-                {
-                    Base = (ExprNode)Base.Clone(),
-                    Order = (ExprNode)Order.Clone()
-                };
-                return null;
-            }
-            else
-            {
-                var mono = new Monomial { Coeff = 0 };
-                return mono;
-            }
+            return null;
         }
 
         public static MonomialFactor operator *(MonomialFactor a, MonomialFactor b)
