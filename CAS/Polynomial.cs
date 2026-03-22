@@ -309,7 +309,7 @@ namespace CAS
                 poly = poly + term.Derivative(variable);
             }
 
-            return poly;
+            return Simplification.Simplify(poly);
         }
 
         public double ConstantPart()
