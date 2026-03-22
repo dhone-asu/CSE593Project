@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,7 +45,83 @@ namespace CAS
             return list;
         }
 
-        public Monomial Derivative(ExprNode variable)
+        public Monomial Derivative(string variable)
+        {
+            var baseVars = Base.GetVariableNames();
+            var orderVars = Order.GetVariableNames();
+            bool baseVarFx = baseVars.Contains(variable);
+            bool orderVarFx = orderVars.Contains(variable);
+
+            if (baseVarFx && orderVarFx)
+                return MixedRuleDeriv(variable);
+            else if (baseVarFx && !orderVarFx)
+                return PowerRuleDeriv(variable);
+            else if (orderVarFx && !baseVarFx)
+                return ExpRuleDeriv(variable);
+            else
+                return new Monomial
+                {
+                    Coeff = 0
+                };
+        }
+
+
+        // d/dx (f(x))^n = f'(x)*n*(f(x))^(n-1)
+        private Monomial PowerRuleDeriv(string variable)
+        {
+            // d/dx (x^n) = n*x^(n-1)
+            if (Base is AtomNode && ((AtomNode)Base).Type == AtomType.Identifier)
+            {
+                var coeff = new MonomialFactor
+                {
+                    Base = Order,
+                    Order = ExprNode.One
+                };
+                var expr = new MonomialFactor
+                {
+                    Base = Base,
+                    Order = Simplification.Resolve(Order - ExprNode.One)
+                };
+                var mono = new Monomial { Coeff = 1 };
+                mono.Factors.Add(coeff);
+                mono.Factors.Add(expr);
+                return Simplification.SimplifyFactors(mono);
+            }
+            else
+            {
+                var basePoly = Simplification.Polynomialize(Base);
+                var baseDeriv = basePoly.Derivative(variable);
+                var fprime = new MonomialFactor
+                {
+                    Base = baseDeriv.ToExpression(),
+                    Order = ExprNode.One
+                };
+                var coeff = new MonomialFactor
+                {
+                    Base = Order,
+                    Order = ExprNode.One
+                };
+                var expr = new MonomialFactor
+                {
+                    Base = Base,
+                    Order = Simplification.Resolve(Order - ExprNode.One)
+                };
+                var mono = new Monomial { Coeff = 1 };
+                mono.Factors.Add(fprime);
+                mono.Factors.Add(coeff);
+                mono.Factors.Add(expr);
+                return Simplification.SimplifyFactors(mono);
+            }
+        }
+
+        // a^f(x) = f'(x)*a^f(x)*ln(a)
+        private Monomial ExpRuleDeriv(string variable)
+        {
+            return null;
+        }
+
+        // (f(x))^g(x) = (g'(x)*ln(f(x)) + f'(x)*g(x)/f(x))*(f(x))^g(x)
+        private Monomial MixedRuleDeriv(string variable)
         {
             return null;
         }
@@ -130,6 +207,34 @@ namespace CAS
             return list;
         }
 
+        public Polynomial Derivative(string variable)
+        {
+            var poly = new Polynomial();
+
+            for (int i = 0; i < Factors.Count; i++)
+            {
+                var mono = new Monomial { Coeff = 1 };
+
+                var factorderiv = new MonomialFactor
+                {
+                    Base = Factors[i].Derivative(variable).ToExpression(),
+                    Order = ExprNode.One
+                };
+
+                for (int j = 0; j < Factors.Count; j++)
+                {
+                    if (i == j)
+                        mono.Factors.Add(factorderiv);
+                    else
+                        mono.Factors.Add(Factors[j]);
+                }
+
+                poly.Terms.Add(mono);
+            }
+
+            return Simplification.Simplify(poly);
+        }
+
         public static Monomial operator*(Monomial a, Monomial b)
         {
             var result = new Monomial();
@@ -193,6 +298,18 @@ namespace CAS
             }
 
             return list;
+        }
+
+        public Polynomial Derivative(string variable)
+        {
+            var poly = new Polynomial();
+
+            foreach (var term in Terms)
+            {
+                poly = poly + term.Derivative(variable);
+            }
+
+            return poly;
         }
 
         public double ConstantPart()

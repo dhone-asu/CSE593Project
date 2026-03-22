@@ -305,6 +305,17 @@ namespace CAS
         }
 
 
+        public static Polynomial RePolynomialize(Polynomial poly)
+        {
+            var expr = poly.ToExpression();
+            return Polynomialize(expr);
+        }
+        public static Polynomial Simplify(Polynomial poly)
+        {
+            var newPoly = RePolynomialize(poly);
+            return SimplifyTerms(newPoly);
+        }
+
         public static ExprNode Simplify(ExprNode expression)
         {
             if (expression is AtomNode)

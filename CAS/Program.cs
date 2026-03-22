@@ -29,6 +29,12 @@ namespace CAS
                 var tok = new Tokenizer(sb);
                 var parser = new Parser(tok);
                 var result = parser.ParseInput();
+
+                var poly = Simplification.Polynomialize(result);
+                var deriv = poly.Derivative("x").ToExpression();
+
+                Console.WriteLine($"deriv = {Evaluator.PrintExpression(deriv)}");
+
                 //var expanded = Expansion.Expand(result);
                 var evaluated = Simplification.Resolve(result);
                 Console.WriteLine(Evaluator.PrintExpression(evaluated));
