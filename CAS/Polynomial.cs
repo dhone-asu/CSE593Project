@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace CAS
 {
     public class MonomialFactor : IEquatable<MonomialFactor>
     {
-        public bool Negative { get; set; } = false;
+        public bool Negative { get; set; }
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
 
@@ -33,6 +34,9 @@ namespace CAS
                 factor = Base;
             else
                 factor = Base ^ Order;
+
+            if (Negative)
+                factor = -factor;
 
             return factor;
         }
@@ -73,6 +77,7 @@ namespace CAS
             {
                 var coeff = new MonomialFactor
                 {
+                    Negative = Negative,
                     Base = Order,
                     Order = ExprNode.One
                 };
@@ -106,6 +111,7 @@ namespace CAS
 
                 var fprime = new MonomialFactor
                 {
+                    Negative = Negative,
                     Base = baseDeriv.ToExpression(),
                     Order = ExprNode.One
                 };
@@ -377,7 +383,7 @@ namespace CAS
 
             for (int i = 0; i < Factors.Count; i++)
             {
-                var mono = new Monomial { Coeff = 1 };
+                var mono = new Monomial { Coeff = Coeff };
 
                 var factorDerivPoly = Factors[i].Derivative(variable).ToPolynomial();
 
