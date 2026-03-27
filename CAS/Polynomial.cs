@@ -10,6 +10,7 @@ namespace CAS
 {
     public class MonomialFactor : IEquatable<MonomialFactor>
     {
+        public bool Negative { get; set; } = false;
         public ExprNode Base { get; set; }
         public ExprNode Order { get; set; }
 

@@ -139,7 +139,13 @@ namespace CAS
             {
                 var opNode = (OpNode)expression;
 
-                if (opNode.Operator == Operator.Pow)
+                if (opNode.Operator == Operator.Neg)
+                {
+                    var factor = GetFactor(opNode.Left);
+                    factor.Negative = !factor.Negative;
+                    return factor;
+                }
+                else if (opNode.Operator == Operator.Pow)
                 {
                     return new MonomialFactor { Base = opNode.Left, Order = opNode.Right };
                 }
@@ -192,6 +198,12 @@ namespace CAS
                     var baseFactor = GetFactor(factor.Base);
                     factor.Base = baseFactor.Base;
                     factor.Order = baseFactor.Order * factor.Order;
+                }
+
+                if (factor.Negative)
+                {
+                    result.Coeff *= -1;
+                    factor.Negative = false;
                 }
 
                 factor.Base = Simplify(factor.Base);
