@@ -37,6 +37,7 @@ namespace CAS.SymbolManagement
 
         public bool CheckParameterTypes(object[] parameters)
         {
+            if (ParameterTypes.Length == 0) return true;
             if (ParameterTypes[ParameterTypes.Length - 1] == ParamType.Args)
             {
                 if (parameters.Length < ParameterTypes.Length - 1)
@@ -305,6 +306,18 @@ namespace CAS.SymbolManagement
             return evaluator.Evaluate();
         }
 
+        public static object Deriv(object[] parameters)
+        {
+            ExprNode expression = (ExprNode)parameters[0];
+            AtomNode param2 = (AtomNode)parameters[1];
+
+            string variable = (string)param2.Data;
+
+            var result = Calculus.Derivative(expression, variable);
+
+            return result;
+        }
+
         public static object Expand(object[] parameters)
         {
             ExprNode expr = (ExprNode)parameters[0];
@@ -507,6 +520,13 @@ namespace CAS.SymbolManagement
                 Name = "subst",
                 Delegate = Subst,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Args },
+                ReturnType = ParamType.Expression
+            };
+            functions["deriv"] = new NativeFunction
+            {
+                Name = "deriv",
+                Delegate = Deriv,
+                ParameterTypes = new ParamType[] {ParamType.Expression, ParamType.Variable},
                 ReturnType = ParamType.Expression
             };
 
