@@ -317,6 +317,19 @@ namespace CAS.SymbolManagement
 
             return result;
         }
+        public static object NDeriv(object[] parameters)
+        {
+            ExprNode expression = (ExprNode)parameters[0];
+            AtomNode param2 = (AtomNode)parameters[1];
+            AtomNode param3 = (AtomNode)parameters[2];
+
+            string variable = (string)param2.Data;
+            uint order = (uint)(double)param3.Data;
+
+            var result = Calculus.Derivative(expression, variable, order);
+
+            return result;
+        }
 
         public static object Expand(object[] parameters)
         {
@@ -527,6 +540,13 @@ namespace CAS.SymbolManagement
                 Name = "deriv",
                 Delegate = Deriv,
                 ParameterTypes = new ParamType[] {ParamType.Expression, ParamType.Variable},
+                ReturnType = ParamType.Expression
+            };
+            functions["nderiv"] = new NativeFunction
+            {
+                Name = "nderiv",
+                Delegate = NDeriv,
+                ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral },
                 ReturnType = ParamType.Expression
             };
 
