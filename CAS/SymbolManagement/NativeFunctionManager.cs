@@ -265,7 +265,7 @@ namespace CAS.SymbolManagement
                 ReturnType = ParamType.Numeral
             };
 
-            var result = ExtendedMath.Integrate(function, a, b);
+            var result = Calculus.Integrate(function, a, b);
             return result;
         }
 
@@ -284,7 +284,7 @@ namespace CAS.SymbolManagement
                 ReturnType = ParamType.Numeral
             };
 
-            var result = ExtendedMath.Differentiate(function, point);
+            var result = Calculus.Differentiate(function, point);
             return result;
         }
         public static object Subst(object[] parameters)
