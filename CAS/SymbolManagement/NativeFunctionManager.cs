@@ -331,6 +331,46 @@ namespace CAS.SymbolManagement
             return result;
         }
 
+        public static object Sum(object[] parameters)
+        {
+            var expr = (ExprNode)parameters[0];
+            var variable = (AtomNode)parameters[1];
+            var aExpr = (ExprNode)parameters[2];
+            var bExpr = (ExprNode)parameters[3];
+            var a = (AtomNode)Simplification.Resolve(aExpr);
+            var b = (AtomNode)Simplification.Resolve(bExpr);
+            var function = new UserFunction
+            {
+                Expression = expr,
+                Name = "anon",
+                ParameterNames = new[] { (string)variable.Data },
+                ParameterTypes = new[] { ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+
+            return Calculus.Sum(function, a, b);
+        }
+
+        public static object Product(object[] parameters)
+        {
+            var expr = (ExprNode)parameters[0];
+            var variable = (AtomNode)parameters[1];
+            var aExpr = (ExprNode)parameters[2];
+            var bExpr = (ExprNode)parameters[3];
+            var a = (AtomNode)Simplification.Resolve(aExpr);
+            var b = (AtomNode)Simplification.Resolve(bExpr);
+            var function = new UserFunction
+            {
+                Expression = expr,
+                Name = "anon",
+                ParameterNames = new[] { (string)variable.Data },
+                ParameterTypes = new[] { ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+
+            return Calculus.Product(function, a, b);
+        }
+
         public static object Expand(object[] parameters)
         {
             ExprNode expr = (ExprNode)parameters[0];
@@ -562,6 +602,20 @@ namespace CAS.SymbolManagement
                 Name = "diff",
                 Delegate = Differentiate,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+            functions["sum"] = new NativeFunction
+            {
+                Name = "sum",
+                Delegate = Sum,
+                ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral, ParamType.Numeral },
+                ReturnType = ParamType.Numeral
+            };
+            functions["product"] = new NativeFunction
+            {
+                Name = "product",
+                Delegate = Product,
+                ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral, ParamType.Numeral },
                 ReturnType = ParamType.Numeral
             };
             functions["expand"] = new NativeFunction

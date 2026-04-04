@@ -54,6 +54,69 @@ namespace CAS
             return (function(a + delta) - function(a)) / delta;
         }
 
+        public static double Sum(Func<double,double> function, double a, double b)
+        {
+            double sum = 0;
+
+            for (double x = a; x <= b; x++)
+                sum += function(x);
+
+            return sum;
+        }
+
+        public static ExprNode Sum(IFunction function, AtomNode a, AtomNode b)
+        {
+            if (a.Type != AtomType.Numeral || b.Type != AtomType.Numeral)
+                throw new Exception("Limits must be numeric");
+            double lowerLim = (double)a.Data;
+            double upperLim = (double)b.Data;
+
+            double sum = 0;
+
+            for (double k = lowerLim; k <= upperLim; k++)
+            {
+                sum += CallFunction(function, k);
+            }
+
+            return new AtomNode
+            {
+                Data = sum,
+                Type = AtomType.Numeral
+            };
+        }
+
+        public static double Product(Func<double, double> function, double a, double b)
+        {
+            double product = 1;
+
+            for (double x = a; x <= b; x++)
+                product *= function(x);
+
+            return product;
+        }
+
+        public static ExprNode Product(IFunction function, AtomNode a, AtomNode b)
+        {
+            if (a.Type != AtomType.Numeral || b.Type != AtomType.Numeral)
+                throw new Exception("Limits must be numeric");
+            double lowerLim = (double)a.Data;
+            double upperLim = (double)b.Data;
+
+            double product = 1;
+
+            for (double k = lowerLim; k <= upperLim; k++)
+            {
+                product *= CallFunction(function, k);
+            }
+
+            return new AtomNode
+            {
+                Data = product,
+                Type = AtomType.Numeral
+            };
+        }
+
+
         private static double CallFunction(IFunction function, double a)
         {
             AtomNode aNode = new AtomNode
