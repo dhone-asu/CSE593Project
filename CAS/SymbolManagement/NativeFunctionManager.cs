@@ -273,7 +273,8 @@ namespace CAS.SymbolManagement
         {
             var expr = (ExprNode)parameters[0];
             var variable = (AtomNode)parameters[1];
-            var point = (AtomNode)parameters[2];
+            var ptExpr = (ExprNode)parameters[2];
+            var point = (AtomNode)Simplification.Resolve(ptExpr);
 
             var function = new UserFunction
             {
