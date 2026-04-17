@@ -431,6 +431,11 @@ namespace CAS
     {
         public List<Monomial> Terms { get; set; } = new List<Monomial>();
 
+        public bool IsEmpty()
+        {
+            return Terms.Count == 0;
+        }
+
         public ExprNode ToExpression()
         {
             if (Terms.Count == 0)
@@ -602,10 +607,14 @@ namespace CAS
             ExprNode vpartResult = a.ToExpression() ^ varPart.ToExpression();
             ExprNode cpartResult = a ^ constPart;
 
-            //var result = Simplification.Simplify(vpartResult * cpartResult);
-            var result = vpartResult * cpartResult;
-
-            return result;
+            if (varPart.IsEmpty())
+                return cpartResult;
+            else if (constPart == 0)
+                return vpartResult;
+            else if (varPart.IsEmpty() && constPart == 0)
+                return ExprNode.One;
+            else
+                return vpartResult*cpartResult;
         }
 
         public static Polynomial operator-(Polynomial poly)
