@@ -610,14 +610,14 @@ namespace CAS.SymbolManagement
                 Name = "sum",
                 Delegate = Sum,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral, ParamType.Numeral },
-                ReturnType = ParamType.Numeral
+                ReturnType = ParamType.Expression
             };
             functions["product"] = new NativeFunction
             {
                 Name = "product",
                 Delegate = Product,
                 ParameterTypes = new ParamType[] { ParamType.Expression, ParamType.Variable, ParamType.Numeral, ParamType.Numeral },
-                ReturnType = ParamType.Numeral
+                ReturnType = ParamType.Expression
             };
             functions["expand"] = new NativeFunction
             {

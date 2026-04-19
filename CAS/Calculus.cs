@@ -71,18 +71,22 @@ namespace CAS
             double lowerLim = (double)a.Data;
             double upperLim = (double)b.Data;
 
-            double sum = 0;
-
-            for (double k = lowerLim; k <= upperLim; k++)
+            ExprNode sum = new AtomNode
             {
-                sum += CallFunction(function, k);
-            }
-
-            return new AtomNode
-            {
-                Data = sum,
+                Data = 0.0,
                 Type = AtomType.Numeral
             };
+            for (double k = lowerLim; k <= upperLim; k++)
+            {
+                ExprNode kNode = new AtomNode
+                {
+                    Data = k,
+                    Type = AtomType.Numeral
+                };
+                sum = Simplification.Resolve(sum + CallFunction(function, kNode));
+            }
+
+            return sum;
         }
 
         public static double Product(Func<double, double> function, double a, double b)
@@ -102,18 +106,23 @@ namespace CAS
             double lowerLim = (double)a.Data;
             double upperLim = (double)b.Data;
 
-            double product = 1;
+            ExprNode product = new AtomNode
+            {
+                Data = 1.0,
+                Type = AtomType.Numeral
+            };
 
             for (double k = lowerLim; k <= upperLim; k++)
             {
-                product *= CallFunction(function, k);
+                AtomNode kNode = new AtomNode
+                {
+                    Data = k,
+                    Type = AtomType.Numeral
+                };
+                product = Simplification.Resolve(product * CallFunction(function, kNode));
             }
 
-            return new AtomNode
-            {
-                Data = product,
-                Type = AtomType.Numeral
-            };
+            return product;
         }
 
 
@@ -126,6 +135,12 @@ namespace CAS
             };
             AtomNode resultNode = (AtomNode)function.Call(new object[] { aNode });
             return (double)resultNode.Data;
+        }
+
+        private static ExprNode CallFunction(IFunction function, ExprNode a)
+        {
+            ExprNode resultNode = (ExprNode)function.Call(new object[] { a });
+            return resultNode;
         }
 
         public static ExprNode Integrate(IFunction function, AtomNode a, AtomNode b)
