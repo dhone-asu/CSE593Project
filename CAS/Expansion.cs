@@ -33,7 +33,10 @@ namespace CAS
             
             foreach (var term in poly.Terms)
             {
-                Polynomial expandedTerm = null;
+                Polynomial expandedTerm = new Polynomial
+                {
+                    Terms = { new Monomial { Coeff = term.Coeff } }
+                };
 
                 foreach (var factor in term.Factors)
                 {
@@ -45,10 +48,10 @@ namespace CAS
                     var newExpr = polyBase ^ polyOrder;
                     var expPoly = Simplification.Polynomialize(newExpr);
 
-                    if (expandedTerm == null)
-                        expandedTerm = expPoly;
-                    else
-                        expandedTerm *= expPoly;
+                    //if (expandedTerm == null)
+                    //    expandedTerm = expPoly;
+                    //else
+                    expandedTerm *= expPoly;
                 }
 
                 newPoly += expandedTerm;
