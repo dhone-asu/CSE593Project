@@ -361,7 +361,12 @@ namespace CAS
 
         public static ExprNode Resolve(ExprNode expression)
         {
-            return Simplify(Evaluator.Evaluate(expression));
+            var evaluated = Evaluator.Evaluate(expression);
+
+            if (evaluated is OpNode && ((OpNode)evaluated).Operator == Operator.Assign)
+                return evaluated;
+            else
+                return Simplify(evaluated);
         }
     }
 }
