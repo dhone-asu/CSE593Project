@@ -193,6 +193,7 @@ namespace CAS
             if ((tree is OpNode) && ((OpNode)tree).Operator == Operator.Assign)
             {
                 OpNode node = (OpNode)tree;
+                node.Right = Evaluate(node.Right);
 
                 Assign(node.Left, node.Right);
                 return tree;
