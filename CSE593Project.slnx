@@ -1,3 +1,6 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Readme.md" />
+  </Folder>
   <Project Path="CAS/CAS.csproj" Id="81c1aff1-f07d-4cb1-9b5c-20e14de261ae" />
 </Solution>
